@@ -1,0 +1,19 @@
+[15:53:00] Deployment started for version 1.3.0.
+[15:53:00] Download started: http://localhost/updates/Version3.zip
+[15:53:00] Download completed: C:\Hackathon\HackathonVersion3\POS_UPDATER_SYSTEM\POS_UPDATER_SYSTEM.Api\Storage\Downloads\Version3.zip
+[15:53:00] SHA256 verification started.
+[15:53:00] SHA256 verified successfully.
+[15:53:00] ZIP integrity validation started.
+[15:53:00] ZIP integrity validation successful.
+[15:53:00] Extracting package to staging: C:\Hackathon\HackathonVersion3\POS_UPDATER_SYSTEM\POS_UPDATER_SYSTEM.Api\Storage\Staging\Version3
+[15:53:00] Extracted to staging.
+[15:53:00] Staging validation started.
+[15:53:00] Validation successful.
+[15:53:00] Backup created: C:\Hackathon\HackathonVersion3\POS_UPDATER_SYSTEM\POS_UPDATER_SYSTEM.Api\Storage\Backups\1.2.0\20260519155300
+[15:53:00] Stopping live host boundary. Static hosting remains online while Current is switched.
+[15:53:00] Activating new version.
+[15:53:00] Current application state replaced with staged candidate.
+[15:53:00] Restarting live host boundary. Static file middleware will serve the new Current contents.
+[15:53:00] Post-activation validation started.
+[15:53:00] Post-activation validation successful.
+[15:53:00] Deployment successful.
