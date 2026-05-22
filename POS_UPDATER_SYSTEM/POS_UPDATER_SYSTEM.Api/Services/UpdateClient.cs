@@ -24,20 +24,64 @@ public sealed class UpdateClient : IUpdateClient
         return latest ?? throw new InvalidOperationException("latest.json was empty or invalid.");
     }
 
-    public async Task<string> DownloadPackageAsync(LatestUpdateInfo latest, DeploymentLogContext log, CancellationToken cancellationToken)
+    public async Task<string> GetLatestVersionAsync(CancellationToken cancellationToken)
+    {
+        // Fetch the manifest but only parse the version field to keep this lightweight.
+        using var response = await _httpClient.GetAsync(_options.LatestJsonUrl, cancellationToken);
+        response.EnsureSuccessStatusCode();
+        var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        var doc = await System.Text.Json.JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
+        if (doc.RootElement.TryGetProperty("version", out var versionProp))
+        {
+            return versionProp.GetString() ?? string.Empty;
+        }
+
+        return string.Empty;
+    }
+
+
+
+    public async Task<string> DownloadPackageAsync(LatestUpdateInfo latest, ILogger logger, CancellationToken cancellationToken)
     {
         _paths.EnsureInitialized();
 
         var packageUri = ResolvePackageUri(latest.Package);
         var targetPath = Path.Combine(_paths.Downloads, latest.Package);
 
-        await log.WriteAsync($"Download started: {packageUri}", cancellationToken);
+        logger.LogInformation("[DOWNLOAD] Package download initiated");
+        logger.LogInformation("[DOWNLOAD] Source: {PackageUri}", packageUri);
+        logger.LogInformation("[DOWNLOAD] Writing package to {TargetPath}", ToDisplayPath(targetPath));
 
-        await using var packageStream = await _httpClient.GetStreamAsync(packageUri, cancellationToken);
-        await using var fileStream = File.Create(targetPath);
-        await packageStream.CopyToAsync(fileStream, cancellationToken);
+        try
+        {
+            using var response = await _httpClient.GetAsync(packageUri, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                logger.LogError("[DOWNLOAD] Package download failed");
+                logger.LogError("[DOWNLOAD] Remote server returned HTTP {StatusCode}", (int)response.StatusCode);
+                throw new HttpRequestException($"Remote server returned HTTP {(int)response.StatusCode}", null, response.StatusCode);
+            }
 
-        await log.WriteAsync($"Download completed: {targetPath}", cancellationToken);
+            logger.LogInformation("[DOWNLOAD] Package stream established");
+            await using var packageStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            await using var fileStream = File.Create(targetPath);
+            await packageStream.CopyToAsync(fileStream, cancellationToken);
+
+            var sizeBytes = new FileInfo(targetPath).Length;
+            logger.LogInformation("[DOWNLOAD] Package download completed successfully");
+            logger.LogInformation("[DOWNLOAD] Total package size: {Size}", FormatSize(sizeBytes));
+        }
+        catch (HttpRequestException)
+        {
+            throw;
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            logger.LogError("[DOWNLOAD] Package download failed");
+            logger.LogError("[DOWNLOAD] {Message}", ex.Message);
+            throw;
+        }
+
         return targetPath;
     }
 
@@ -50,5 +94,22 @@ public sealed class UpdateClient : IUpdateClient
 
         var latestUri = new Uri(_options.LatestJsonUrl, UriKind.Absolute);
         return new Uri(latestUri, package);
+    }
+
+    private static string ToDisplayPath(string path)
+    {
+        var storageIndex = path.IndexOf($"{Path.DirectorySeparatorChar}Storage{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase);
+        if (storageIndex < 0)
+        {
+            return path;
+        }
+
+        return path[(storageIndex + 1)..];
+    }
+
+    private static string FormatSize(long bytes)
+    {
+        var mb = bytes / 1024d / 1024d;
+        return $"{mb:0.##} MB";
     }
 }

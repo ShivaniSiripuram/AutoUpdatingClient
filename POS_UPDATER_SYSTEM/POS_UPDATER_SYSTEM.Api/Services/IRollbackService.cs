@@ -1,8 +1,8 @@
-using POS_UPDATER_SYSTEM.Api.Models;
-
 namespace POS_UPDATER_SYSTEM.Api.Services;
 
 public interface IRollbackService
 {
-    Task RollbackAsync(string backupPath, DeploymentLogContext log, CancellationToken cancellationToken);
+    Task<RollbackOutcome> RollbackLatestAsync(ILogger logger, CancellationToken cancellationToken);
 }
+
+public sealed record RollbackOutcome(string BackupPath, string Version);

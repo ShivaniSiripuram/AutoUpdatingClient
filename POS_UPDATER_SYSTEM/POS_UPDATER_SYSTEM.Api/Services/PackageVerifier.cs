@@ -15,18 +15,20 @@ public sealed class PackageVerifier : IPackageVerifier
         _options = options.Value;
     }
 
-    public async Task VerifyAsync(string packagePath, string expectedSha256, DeploymentLogContext log, CancellationToken cancellationToken)
+    public async Task VerifyAsync(string packagePath, string expectedSha256, ILogger logger, CancellationToken cancellationToken)
     {
-        await log.WriteAsync("SHA256 verification started.", cancellationToken);
+        logger.LogInformation("[VERIFY] SHA256 validation started");
         var actualHash = await ComputeSha256Async(packagePath, cancellationToken);
 
         if (!string.Equals(actualHash, expectedSha256, StringComparison.OrdinalIgnoreCase))
         {
+            logger.LogError("[VERIFY] Package validation failed");
+            logger.LogError("[VERIFY] SHA256 mismatch. Expected {ExpectedSha256}, actual {ActualSha256}", expectedSha256, actualHash);
             throw new InvalidOperationException($"SHA256 mismatch. Expected {expectedSha256}, actual {actualHash}.");
         }
 
-        await log.WriteAsync("SHA256 verified successfully.", cancellationToken);
-        await log.WriteAsync("ZIP integrity validation started.", cancellationToken);
+        logger.LogInformation("[VERIFY] SHA256 verification successful");
+        logger.LogInformation("[VERIFY] ZIP integrity validation started");
 
         using var archive = ZipFile.OpenRead(packagePath);
         var entries = archive.Entries
@@ -36,15 +38,21 @@ public sealed class PackageVerifier : IPackageVerifier
 
         if (!entries.Any(entry => string.Equals(Path.GetFileName(entry), "index.html", StringComparison.OrdinalIgnoreCase)))
         {
+            logger.LogError("[VERIFY] Package validation failed");
+            logger.LogError("[VERIFY] index.html missing inside package");
             throw new InvalidOperationException("Package is invalid. index.html was not found.");
         }
 
+        logger.LogInformation("[VERIFY] Angular shell validation started");
+
         if (!entries.Any(IsMainScript))
         {
+            logger.LogError("[VERIFY] Package validation failed");
+            logger.LogError("[VERIFY] main*.js missing inside package");
             throw new InvalidOperationException($"Package is invalid. No script matching {_options.MainScriptPattern} was found.");
         }
 
-        await log.WriteAsync("ZIP integrity validation successful.", cancellationToken);
+        logger.LogInformation("[VERIFY] main*.js validation successful");
     }
 
     private static async Task<string> ComputeSha256Async(string packagePath, CancellationToken cancellationToken)

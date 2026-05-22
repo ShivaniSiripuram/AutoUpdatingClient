@@ -14,3 +14,4 @@ public sealed class UpdaterOptions
 
     public string MainScriptPattern { get; set; } = "main*.js";
 }
+

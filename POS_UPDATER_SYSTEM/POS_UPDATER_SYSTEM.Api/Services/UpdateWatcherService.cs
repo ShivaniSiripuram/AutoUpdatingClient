@@ -22,40 +22,57 @@ public sealed class UpdateWatcherService : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var interval = TimeSpan.FromMinutes(Math.Max(1, _options.CheckIntervalMinutes));
-        _logger.LogInformation("Background update watcher started. Interval: {Interval}.", interval);
+
+        _logger.LogInformation("Watcher started with interval {Interval}. Watcher checks only; deployments remain manual.", interval);
 
         using var timer = new PeriodicTimer(interval);
 
-        while (await timer.WaitForNextTickAsync(stoppingToken))
+        while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                await RunCycleAsync(stoppingToken);
+                await timer.WaitForNextTickAsync(stoppingToken);
             }
-            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            catch (OperationCanceledException)
             {
                 break;
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Background update cycle failed. The watcher will continue.");
-            }
+
+            await RunCycleSafeAsync(stoppingToken);
         }
+
+        _logger.LogInformation("Watcher stopped.");
     }
 
-    private async Task RunCycleAsync(CancellationToken stoppingToken)
+    private async Task RunCycleSafeAsync(CancellationToken ct)
     {
-        using var scope = _scopeFactory.CreateScope();
-        var orchestrator = scope.ServiceProvider.GetRequiredService<IDeploymentOrchestrator>();
-        var result = await orchestrator.RunDeploymentIfAvailableAsync(stoppingToken);
+        try
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var orchestrator = scope.ServiceProvider.GetRequiredService<IDeploymentOrchestrator>();
 
-        if (result.Succeeded)
-        {
-            _logger.LogInformation("Background update cycle completed: {Message}", result.Message);
+            _logger.LogInformation("Watcher check cycle started.");
+
+            var result = await orchestrator.CheckForUpdateAsync(ct);
+
+            if (result.IsUpdateAvailable)
+            {
+                _logger.LogInformation(
+                    "Watcher found update. Current={CurrentVersion}, Latest={LatestVersion}. Deployment remains manual.",
+                    result.CurrentVersion,
+                    result.LatestVersion);
+            }
+            else
+            {
+                _logger.LogInformation(
+                    "Watcher found no update. Current={CurrentVersion}, Latest={LatestVersion}.",
+                    result.CurrentVersion,
+                    result.LatestVersion);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogWarning("Background update cycle completed with no deployment success: {Message}", result.Message);
+            _logger.LogError(ex, "Watcher check cycle failed.");
         }
     }
 }

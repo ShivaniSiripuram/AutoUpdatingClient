@@ -9,4 +9,6 @@ public sealed class UpdateCheckResult
     public bool IsUpdateAvailable { get; init; }
 
     public LatestUpdateInfo? Latest { get; init; }
+
+    public string? LogFile { get; init; }
 }

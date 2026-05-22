@@ -9,4 +9,6 @@ public interface IDeploymentOrchestrator
     Task<DeploymentResult> RunDeploymentIfAvailableAsync(CancellationToken cancellationToken);
 
     Task<DeploymentResult> RunDeploymentAsync(LatestUpdateInfo latest, CancellationToken cancellationToken);
+
+    Task<DeploymentResult> RollbackToPreviousVersionAsync(CancellationToken cancellationToken);
 }

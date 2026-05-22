@@ -17,12 +17,13 @@ public sealed class LiveAppValidator : ILiveAppValidator
         _options = options.Value;
     }
 
-    public async Task ValidateAsync(DeploymentLogContext log, CancellationToken cancellationToken)
+    public async Task ValidateAsync(ILogger logger, CancellationToken cancellationToken)
     {
-        await log.WriteAsync("Post-activation validation started.", cancellationToken);
+        logger.LogInformation("Post-activation validation started for Current path {CurrentPath}.", _paths.Current);
 
         if (!File.Exists(Path.Combine(_paths.Current, "index.html")))
         {
+            logger.LogError("Post-activation validation failed. Current/index.html is missing under {CurrentPath}.", _paths.Current);
             throw new InvalidOperationException("Post-activation validation failed. Current/index.html is missing.");
         }
 
@@ -31,6 +32,7 @@ public sealed class LiveAppValidator : ILiveAppValidator
 
         if (!mainScriptExists)
         {
+            logger.LogError("Post-activation validation failed. Current main script is missing under {CurrentPath}.", _paths.Current);
             throw new InvalidOperationException("Post-activation validation failed. Current main script is missing.");
         }
 
@@ -40,10 +42,11 @@ public sealed class LiveAppValidator : ILiveAppValidator
             using var response = await _httpClient.GetAsync(indexUri, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
+                logger.LogError("Post-activation validation failed. {IndexUri} returned HTTP {StatusCode}.", indexUri, (int)response.StatusCode);
                 throw new InvalidOperationException($"Post-activation validation failed. {indexUri} returned {(int)response.StatusCode}.");
             }
         }
 
-        await log.WriteAsync("Post-activation validation successful.", cancellationToken);
+        logger.LogInformation("Post-activation validation successful.");
     }
 }

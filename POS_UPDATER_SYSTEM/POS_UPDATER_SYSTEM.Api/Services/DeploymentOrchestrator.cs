@@ -4,276 +4,392 @@ namespace POS_UPDATER_SYSTEM.Api.Services;
 
 public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
 {
-    private readonly IDeploymentStateStore _stateStore;
+    private static readonly SemaphoreSlim OperationLock = new(1, 1);
+
     private readonly IUpdateClient _updateClient;
-    private readonly IPackageVerifier _packageVerifier;
     private readonly IStagingService _stagingService;
+    private readonly IPackageVerifier _verifier;
     private readonly IActivationService _activationService;
-    private readonly IRollbackService _rollbackService;
     private readonly IHostRuntimeManager _hostRuntimeManager;
-    private readonly ILiveAppValidator _liveAppValidator;
-    private readonly StoragePaths _paths;
+    private readonly IRollbackService _rollbackService;
+    private readonly IDeploymentStateStore _stateStore;
     private readonly ILogger<DeploymentOrchestrator> _logger;
-    private readonly SemaphoreSlim _deploymentLock = new(1, 1);
+    private readonly StoragePaths _paths;
 
     public DeploymentOrchestrator(
-        IDeploymentStateStore stateStore,
         IUpdateClient updateClient,
-        IPackageVerifier packageVerifier,
         IStagingService stagingService,
+        IPackageVerifier verifier,
         IActivationService activationService,
-        IRollbackService rollbackService,
         IHostRuntimeManager hostRuntimeManager,
-        ILiveAppValidator liveAppValidator,
-        StoragePaths paths,
-        ILogger<DeploymentOrchestrator> logger)
+        IRollbackService rollbackService,
+        IDeploymentStateStore stateStore,
+        ILogger<DeploymentOrchestrator> logger,
+        StoragePaths paths)
     {
-        _stateStore = stateStore;
         _updateClient = updateClient;
-        _packageVerifier = packageVerifier;
         _stagingService = stagingService;
+        _verifier = verifier;
         _activationService = activationService;
-        _rollbackService = rollbackService;
         _hostRuntimeManager = hostRuntimeManager;
-        _liveAppValidator = liveAppValidator;
-        _paths = paths;
+        _rollbackService = rollbackService;
+        _stateStore = stateStore;
         _logger = logger;
+        _paths = paths;
     }
 
     public async Task<UpdateCheckResult> CheckForUpdateAsync(CancellationToken cancellationToken)
     {
-        await SetStateAsync(DeploymentStatus.CHECKING, cancellationToken, state =>
+        if (!await OperationLock.WaitAsync(0, cancellationToken))
         {
-            state.LastCheckTime = DateTimeOffset.UtcNow;
-        });
+            var state = await _stateStore.GetAsync(cancellationToken);
+            _logger.LogWarning("Update check skipped because another deployment operation is already running.");
+            return new UpdateCheckResult
+            {
+                CurrentVersion = state.CurrentVersion,
+                LatestVersion = state.CurrentVersion,
+                IsUpdateAvailable = false,
+                Latest = null,
+                LogFile = state.LastOperationLogFile
+            };
+        }
 
-        var state = await _stateStore.GetAsync(cancellationToken);
-        var latest = await _updateClient.GetLatestAsync(cancellationToken);
-        var isAvailable = IsNewer(latest.Version, state.CurrentVersion);
-
-        await SetStateAsync(DeploymentStatus.LIVE, cancellationToken);
-
-        return new UpdateCheckResult
+        try
         {
-            CurrentVersion = state.CurrentVersion,
-            LatestVersion = latest.Version,
-            IsUpdateAvailable = isAvailable,
-            Latest = latest
-        };
+            await SetStateAsync(DeploymentStatus.CHECKING, null, cancellationToken);
+
+            var latest = await _updateClient.GetLatestAsync(cancellationToken);
+            var stateSnapshot = await _stateStore.GetAsync(cancellationToken);
+            var currentVersion = stateSnapshot.CurrentVersion;
+            var isBlockedVersion = IsSameVersion(latest.Version, stateSnapshot.BlockedVersion);
+            var isUpdateAvailable = !isBlockedVersion && !IsSameVersion(currentVersion, latest.Version);
+
+            _logger.LogInformation(
+                "Update check completed. Current={CurrentVersion}, Latest={LatestVersion}, UpdateAvailable={IsUpdateAvailable}, Blocked={IsBlockedVersion}.",
+                currentVersion,
+                latest.Version,
+                isUpdateAvailable,
+                isBlockedVersion);
+
+            await _stateStore.UpdateAsync(state =>
+            {
+                state.Status = DeploymentStatus.LIVE;
+                state.IsUpdating = false;
+                state.LastError = null;
+                state.LastCheckTime = DateTimeOffset.UtcNow;
+                return state;
+            }, cancellationToken);
+
+            return new UpdateCheckResult
+            {
+                CurrentVersion = currentVersion,
+                LatestVersion = isBlockedVersion ? currentVersion : latest.Version,
+                IsUpdateAvailable = isUpdateAvailable,
+                Latest = isBlockedVersion ? null : latest,
+                LogFile = stateSnapshot.LastOperationLogFile
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Update check failed.");
+            await MarkFailedAsync("Update check failed.", ex, null, cancellationToken);
+            throw;
+        }
+        finally
+        {
+            OperationLock.Release();
+        }
     }
 
     public async Task<DeploymentResult> RunDeploymentIfAvailableAsync(CancellationToken cancellationToken)
     {
-        if (!await _deploymentLock.WaitAsync(0, cancellationToken))
-        {
-            _logger.LogWarning("Update cycle skipped because another deployment is already running.");
-            return new DeploymentResult { Succeeded = false, Message = "Deployment already running." };
-        }
+        var check = await CheckForUpdateAsync(cancellationToken);
 
-        try
+        if (!check.IsUpdateAvailable || check.Latest == null)
         {
-            await SetUpdatingAsync(true, cancellationToken);
-
-            var check = await CheckForUpdateAsync(cancellationToken);
-            if (!check.IsUpdateAvailable || check.Latest is null)
+            return new DeploymentResult
             {
-                return new DeploymentResult
-                {
-                    Succeeded = true,
-                    Message = $"No update available. Current version is {check.CurrentVersion}."
-                };
-            }
+                Succeeded = false,
+                Message = "No updates available",
+                LogFile = check.LogFile
+            };
+        }
 
-            return await RunDeploymentCoreAsync(check.Latest, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Deployment cycle failed.");
-            await MarkFailedAsync(ex.Message, cancellationToken);
-            return new DeploymentResult { Succeeded = false, Message = ex.Message };
-        }
-        finally
-        {
-            await SetUpdatingAsync(false, CancellationToken.None);
-            _deploymentLock.Release();
-        }
+        return await RunDeploymentAsync(check.Latest, cancellationToken);
     }
 
     public async Task<DeploymentResult> RunDeploymentAsync(LatestUpdateInfo latest, CancellationToken cancellationToken)
     {
-        if (!await _deploymentLock.WaitAsync(0, cancellationToken))
+        if (!await OperationLock.WaitAsync(0, cancellationToken))
         {
-            _logger.LogWarning("Manual deployment skipped because another deployment is already running.");
-            return new DeploymentResult { Succeeded = false, Message = "Deployment already running." };
+            return new DeploymentResult
+            {
+                Succeeded = false,
+                Version = latest.Version,
+                Message = "Another deployment operation is already running."
+            };
         }
 
-        try
-        {
-            await SetUpdatingAsync(true, cancellationToken);
-            return await RunDeploymentCoreAsync(latest, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Manual deployment failed.");
-            await MarkFailedAsync(ex.Message, cancellationToken);
-            return new DeploymentResult { Succeeded = false, Message = ex.Message };
-        }
-        finally
-        {
-            await SetUpdatingAsync(false, CancellationToken.None);
-            _deploymentLock.Release();
-        }
-    }
+        var logPath = CreateOperationLogPath("deployment", latest.Version);
+        using var scope = BeginOperationLogScope(logPath);
 
-    private async Task<DeploymentResult> RunDeploymentCoreAsync(LatestUpdateInfo latest, CancellationToken cancellationToken)
-    {
-        var log = CreateDeploymentLog(latest.Version);
         string? backupPath = null;
-        string? previousVersion = null;
 
         try
         {
-            await log.WriteAsync($"Deployment started for version {latest.Version}.", cancellationToken);
+            var startingState = await _stateStore.GetAsync(cancellationToken);
+            if (IsSameVersion(latest.Version, startingState.BlockedVersion))
+            {
+                _logger.LogWarning("Deployment refused because version {Version} is blocked after manual rollback.", latest.Version);
+                return new DeploymentResult
+                {
+                    Succeeded = false,
+                    Version = latest.Version,
+                    Message = "No updates available",
+                    LogFile = Path.GetFileName(logPath)
+                };
+            }
 
-            await SetStateAsync(DeploymentStatus.DOWNLOADING, cancellationToken);
-            var packagePath = await _updateClient.DownloadPackageAsync(latest, log, cancellationToken);
+            _logger.LogInformation("[WATCHER] New version detected. Deployment pipeline triggered.");
+            _logger.LogInformation("[PIPELINE] Target version: {Version}", latest.Version);
 
-            await SetStateAsync(DeploymentStatus.VERIFYING, cancellationToken);
-            await _packageVerifier.VerifyAsync(packagePath, latest.Sha256, log, cancellationToken);
+            await SetStateAsync(DeploymentStatus.DOWNLOADING, Path.GetFileName(logPath), cancellationToken);
+            var packagePath = await _updateClient.DownloadPackageAsync(latest, _logger, cancellationToken);
 
-            await SetStateAsync(DeploymentStatus.STAGING, cancellationToken);
-            var stagingPath = await _stagingService.StageAsync(packagePath, log, cancellationToken);
+            await SetStateAsync(DeploymentStatus.VERIFYING, Path.GetFileName(logPath), cancellationToken);
+            await _verifier.VerifyAsync(packagePath, latest.Sha256, _logger, cancellationToken);
 
-            await SetStateAsync(DeploymentStatus.VALIDATING, cancellationToken);
-            await _stagingService.ValidateAsync(stagingPath, log, cancellationToken);
+            await SetStateAsync(DeploymentStatus.STAGING, Path.GetFileName(logPath), cancellationToken);
+            var stagingPath = await _stagingService.StageAsync(packagePath, _logger, cancellationToken);
 
-            var state = await _stateStore.GetAsync(cancellationToken);
-            previousVersion = state.CurrentVersion;
+            await SetStateAsync(DeploymentStatus.VALIDATING_STATIC, Path.GetFileName(logPath), cancellationToken);
+            await _stagingService.ValidateAsync(stagingPath, _logger, cancellationToken);
 
-            await SetStateAsync(DeploymentStatus.BACKING_UP, cancellationToken);
-            backupPath = await _activationService.BackupCurrentAsync(previousVersion, log, cancellationToken);
+            await SetStateAsync(DeploymentStatus.VALIDATING_RUNTIME, Path.GetFileName(logPath), cancellationToken);
+            await _stagingService.ValidateRuntimeAsync(stagingPath, _logger, cancellationToken);
 
-            await _hostRuntimeManager.StopLiveAppAsync(log, cancellationToken);
+            await SetStateAsync(DeploymentStatus.RESTARTING, Path.GetFileName(logPath), cancellationToken);
+            await _hostRuntimeManager.StopLiveAppAsync(_logger, cancellationToken);
 
-            await SetStateAsync(DeploymentStatus.ACTIVATING, cancellationToken);
-            await _activationService.ActivateAsync(stagingPath, log, cancellationToken);
+            await SetStateAsync(DeploymentStatus.BACKING_UP, Path.GetFileName(logPath), cancellationToken);
+            var currentVersion = await _stateStore.GetCurrentVersionAsync(cancellationToken);
+            backupPath = await _activationService.BackupCurrentAsync(currentVersion, _logger, cancellationToken);
+            CleanupOldBackupsExcept(backupPath);
 
-            await SetStateAsync(DeploymentStatus.RESTARTING, cancellationToken);
-            await _hostRuntimeManager.RestartLiveAppAsync(log, cancellationToken);
+            await _stateStore.SaveLastBackupAsync(backupPath, cancellationToken);
 
-            await _liveAppValidator.ValidateAsync(log, cancellationToken);
+            await SetStateAsync(DeploymentStatus.ACTIVATING, Path.GetFileName(logPath), cancellationToken);
+            await _activationService.ActivateAsync(stagingPath, _logger, cancellationToken);
+
+            await SetStateAsync(DeploymentStatus.RESTARTING, Path.GetFileName(logPath), cancellationToken);
+            await _hostRuntimeManager.RestartLiveAppAsync(_logger, cancellationToken);
 
             await _stateStore.UpdateAsync(state =>
             {
                 state.CurrentVersion = latest.Version;
                 state.LastKnownGoodVersion = latest.Version;
-                state.LastUpdateTime = DateTimeOffset.UtcNow;
+                state.LastBackupPath = backupPath;
                 state.Status = DeploymentStatus.LIVE;
+                state.IsUpdating = false;
                 state.LastError = null;
+                state.LastUpdateTime = DateTimeOffset.UtcNow;
+                state.LastOperationLogFile = Path.GetFileName(logPath);
+                state.BlockedVersion = null;
+                state.BlockedVersionAt = null;
                 return state;
             }, cancellationToken);
 
-            await log.WriteAsync("Deployment successful.", cancellationToken);
+            _logger.LogInformation("[ACTIVATION] Version {Version} is now LIVE", latest.Version);
 
             return new DeploymentResult
             {
                 Succeeded = true,
-                Message = "Deployment successful.",
                 Version = latest.Version,
-                LogFile = log.LogFile
+                Message = "Deployment successful. Manual rollback is available.",
+                LogFile = Path.GetFileName(logPath)
             };
         }
-        catch (Exception ex) when (backupPath is not null && previousVersion is not null)
+        catch (Exception ex)
         {
-            _logger.LogError(ex, "Activation failed. Rolling back to {Version}.", previousVersion);
-            await log.WriteAsync($"Deployment failed: {ex.Message}", CancellationToken.None);
-            await SetStateAsync(DeploymentStatus.ROLLBACK, CancellationToken.None, state => state.LastError = ex.Message);
+            _logger.LogError(
+                ex,
+                "[PIPELINE] Deployment stopped for version {Version}. No automatic rollback was attempted. BackupPath={BackupPath}.",
+                latest.Version,
+                backupPath ?? "none");
 
-            try
+            await MarkFailedAsync("Deployment stopped before completion. No automatic rollback was attempted.", ex, Path.GetFileName(logPath), cancellationToken);
+
+            return new DeploymentResult
             {
-                await _rollbackService.RollbackAsync(backupPath, log, CancellationToken.None);
-                await _liveAppValidator.ValidateAsync(log, CancellationToken.None);
-
-                await _stateStore.UpdateAsync(state =>
-                {
-                    state.CurrentVersion = previousVersion;
-                    state.LastKnownGoodVersion = previousVersion;
-                    state.Status = DeploymentStatus.ROLLED_BACK;
-                    state.LastError = ex.Message;
-                    return state;
-                }, CancellationToken.None);
-
-                await log.WriteAsync("Rollback successful.", CancellationToken.None);
-
-                return new DeploymentResult
-                {
-                    Succeeded = false,
-                    RolledBack = true,
-                    Message = $"Deployment failed and rollback restored {previousVersion}. Error: {ex.Message}",
-                    Version = previousVersion,
-                    LogFile = log.LogFile
-                };
-            }
-            catch (Exception rollbackException)
-            {
-                _logger.LogCritical(rollbackException, "Rollback failed.");
-                await MarkFailedAsync(rollbackException.Message, CancellationToken.None);
-                await log.WriteAsync($"Rollback failed: {rollbackException.Message}", CancellationToken.None);
-
-                return new DeploymentResult
-                {
-                    Succeeded = false,
-                    Message = $"Deployment and rollback failed. Deployment error: {ex.Message}. Rollback error: {rollbackException.Message}",
-                    LogFile = log.LogFile
-                };
-            }
+                Succeeded = false,
+                Version = latest.Version,
+                Message = ex.Message,
+                LogFile = Path.GetFileName(logPath)
+            };
+        }
+        finally
+        {
+            OperationLock.Release();
         }
     }
 
-    private DeploymentLogContext CreateDeploymentLog(string version)
+    public async Task<DeploymentResult> RollbackToPreviousVersionAsync(CancellationToken cancellationToken)
     {
-        _paths.EnsureInitialized();
-        var safeVersion = string.Join("_", version.Split(Path.GetInvalidFileNameChars()));
-        var logFile = Path.Combine(_paths.Logs, $"deployment-{DateTimeOffset.Now:yyyyMMdd-HHmmss}-{safeVersion}.log");
-        return new DeploymentLogContext(logFile);
-    }
-
-    private async Task SetUpdatingAsync(bool isUpdating, CancellationToken cancellationToken)
-    {
-        await _stateStore.UpdateAsync(state =>
+        if (!await OperationLock.WaitAsync(0, cancellationToken))
         {
-            state.IsUpdating = isUpdating;
-            return state;
-        }, cancellationToken);
+            return new DeploymentResult
+            {
+                Succeeded = false,
+                RolledBack = false,
+                Message = "Another deployment operation is already running."
+            };
+        }
+
+        var logPath = CreateOperationLogPath("rollback", "manual");
+        using var scope = BeginOperationLogScope(logPath);
+
+        try
+        {
+            var rolledBackFromVersion = await _stateStore.GetCurrentVersionAsync(cancellationToken);
+            await SetStateAsync(DeploymentStatus.ROLLBACK, Path.GetFileName(logPath), cancellationToken);
+            var outcome = await _rollbackService.RollbackLatestAsync(_logger, cancellationToken);
+
+            await _stateStore.UpdateAsync(state =>
+            {
+                state.CurrentVersion = outcome.Version;
+                state.LastKnownGoodVersion = outcome.Version;
+                state.LastBackupPath = null;
+                state.Status = DeploymentStatus.ROLLED_BACK;
+                state.IsUpdating = false;
+                state.LastError = null;
+                state.LastRollbackTime = DateTimeOffset.UtcNow;
+                state.LastOperationLogFile = Path.GetFileName(logPath);
+                state.BlockedVersion = rolledBackFromVersion;
+                state.BlockedVersionAt = DateTimeOffset.UtcNow;
+                return state;
+            }, cancellationToken);
+
+            _logger.LogInformation("[ROLLBACK] Manual rollback succeeded");
+            _logger.LogInformation("[ROLLBACK] Restored version {Version}", outcome.Version);
+            _logger.LogInformation("[ROLLBACK] Blocked rolled-back version {BlockedVersion}", rolledBackFromVersion);
+
+            return new DeploymentResult
+            {
+                Succeeded = true,
+                RolledBack = true,
+                Version = outcome.Version,
+                Message = "Rollback successful. Backup was consumed; no further rollback is available until the next deployment.",
+                LogFile = Path.GetFileName(logPath)
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[ROLLBACK] Manual rollback failed");
+            await MarkFailedAsync("Manual rollback failed.", ex, Path.GetFileName(logPath), cancellationToken);
+
+            return new DeploymentResult
+            {
+                Succeeded = false,
+                RolledBack = false,
+                Message = ex.Message,
+                LogFile = Path.GetFileName(logPath)
+            };
+        }
+        finally
+        {
+            OperationLock.Release();
+        }
     }
 
-    private async Task SetStateAsync(DeploymentStatus status, CancellationToken cancellationToken, Action<DeploymentState>? mutate = null)
+    private async Task SetStateAsync(DeploymentStatus status, string? logFile, CancellationToken cancellationToken)
     {
         await _stateStore.UpdateAsync(state =>
         {
             state.Status = status;
-            mutate?.Invoke(state);
+            state.IsUpdating = status is DeploymentStatus.DOWNLOADING
+                or DeploymentStatus.VERIFYING
+                or DeploymentStatus.STAGING
+                or DeploymentStatus.VALIDATING_STATIC
+                or DeploymentStatus.VALIDATING_RUNTIME
+                or DeploymentStatus.BACKING_UP
+                or DeploymentStatus.ACTIVATING
+                or DeploymentStatus.RESTARTING
+                or DeploymentStatus.ROLLBACK;
+            state.LastError = null;
+            if (!string.IsNullOrWhiteSpace(logFile))
+            {
+                state.LastOperationLogFile = logFile;
+            }
             return state;
         }, cancellationToken);
     }
 
-    private async Task MarkFailedAsync(string error, CancellationToken cancellationToken)
+    private async Task MarkFailedAsync(string reason, Exception exception, string? logFile, CancellationToken cancellationToken)
     {
         await _stateStore.UpdateAsync(state =>
         {
             state.Status = DeploymentStatus.FAILED;
-            state.LastError = error;
+            state.IsUpdating = false;
+            state.LastError = $"{reason} {exception.Message}";
+            if (!string.IsNullOrWhiteSpace(logFile))
+            {
+                state.LastOperationLogFile = logFile;
+            }
             return state;
         }, cancellationToken);
     }
 
-    private static bool IsNewer(string latestVersion, string currentVersion)
+    private IDisposable? BeginOperationLogScope(string logPath)
     {
-        if (Version.TryParse(latestVersion, out var latest) && Version.TryParse(currentVersion, out var current))
+        return _logger.BeginScope(new Dictionary<string, object>
         {
-            return latest > current;
+            ["OperationLogFile"] = logPath
+        });
+    }
+
+    private string CreateOperationLogPath(string operation, string version)
+    {
+        _paths.EnsureInitialized();
+        var safeVersion = SanitizePathSegment(version);
+        var timestamp = DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmss");
+        return Path.Combine(_paths.Logs, $"{operation}-{timestamp}-{safeVersion}.log");
+    }
+
+    private void CleanupOldBackupsExcept(string backupPathToKeep)
+    {
+        foreach (var backupPath in Directory.EnumerateDirectories(_paths.Backups, "*", SearchOption.TopDirectoryOnly))
+        {
+            if (string.Equals(Path.GetFullPath(backupPath), Path.GetFullPath(backupPathToKeep), StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            try
+            {
+                Directory.Delete(backupPath, true);
+                _logger.LogInformation("Removed older rollback backup {BackupPath}.", backupPath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Could not remove older rollback backup {BackupPath}.", backupPath);
+            }
+        }
+    }
+
+    private static string SanitizePathSegment(string value)
+    {
+        foreach (var invalid in Path.GetInvalidFileNameChars())
+        {
+            value = value.Replace(invalid, '_');
         }
 
-        return string.Compare(latestVersion, currentVersion, StringComparison.OrdinalIgnoreCase) > 0;
+        return value;
+    }
+
+    private static bool IsSameVersion(string? left, string? right)
+    {
+        return !string.IsNullOrWhiteSpace(left)
+            && !string.IsNullOrWhiteSpace(right)
+            && string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
     }
 }

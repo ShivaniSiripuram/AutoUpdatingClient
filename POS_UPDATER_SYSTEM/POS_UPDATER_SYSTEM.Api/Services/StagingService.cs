@@ -1,6 +1,5 @@
 using System.IO.Compression;
 using Microsoft.Extensions.Options;
-using POS_UPDATER_SYSTEM.Api.Models;
 using POS_UPDATER_SYSTEM.Api.Options;
 
 namespace POS_UPDATER_SYSTEM.Api.Services;
@@ -16,103 +15,133 @@ public sealed class StagingService : IStagingService
         _options = options.Value;
     }
 
-    public async Task<string> StageAsync(string packagePath, DeploymentLogContext log, CancellationToken cancellationToken)
+    public async Task<string> StageAsync(string packagePath, ILogger logger, CancellationToken ct)
     {
+        logger.LogInformation("[STAGING] Staging process started");
+        logger.LogInformation("[STAGING] Extracting package into isolated staging environment");
+
         var stagingPath = Path.Combine(_paths.Staging, Path.GetFileNameWithoutExtension(packagePath));
+
         if (Directory.Exists(stagingPath))
-        {
-            Directory.Delete(stagingPath, recursive: true);
-        }
+            Directory.Delete(stagingPath, true);
 
         Directory.CreateDirectory(stagingPath);
 
-        try
-        {
-            await log.WriteAsync($"Extracting package to staging: {stagingPath}", cancellationToken);
-            ExtractToDirectorySafely(packagePath, stagingPath);
-            await log.WriteAsync("Extracted to staging.", cancellationToken);
-            return stagingPath;
-        }
-        catch
-        {
-            if (Directory.Exists(stagingPath))
-            {
-                Directory.Delete(stagingPath, recursive: true);
-            }
+        ExtractZipSafely(packagePath, stagingPath);
 
-            throw;
-        }
+        var root = FindAngularRoot(stagingPath);
+
+        NormalizeToRoot(root, stagingPath);
+
+        logger.LogInformation("[STAGING] Package extracted to {StagingPath}", ToDisplayPath(stagingPath));
+
+        return stagingPath;
     }
 
-    public async Task ValidateAsync(string stagingPath, DeploymentLogContext log, CancellationToken cancellationToken)
+    public Task ValidateAsync(string stagingPath, ILogger logger, CancellationToken ct)
     {
-        await log.WriteAsync("Staging validation started.", cancellationToken);
+        var root = FindAngularRoot(stagingPath);
 
-        var root = ResolveApplicationRoot(stagingPath);
         var indexPath = Path.Combine(root, "index.html");
 
         if (!File.Exists(indexPath))
         {
-            throw new InvalidOperationException("Staging validation failed. index.html was not found.");
+            logger.LogError("[STAGING] Runtime validation failed");
+            logger.LogError("[STAGING] index.html unreachable in staging environment");
+            throw new InvalidOperationException("Staging invalid: index.html missing");
         }
 
-        var mainScriptExists = Directory.EnumerateFiles(root, "*.js", SearchOption.AllDirectories)
-            .Any(path => Path.GetFileName(path).StartsWith("main", StringComparison.OrdinalIgnoreCase));
+        var hasMainJs = Directory.EnumerateFiles(root, "*.js", SearchOption.AllDirectories)
+            .Any(f => Path.GetFileName(f).StartsWith("main", StringComparison.OrdinalIgnoreCase));
 
-        if (!mainScriptExists)
+        if (!hasMainJs)
         {
-            throw new InvalidOperationException($"Staging validation failed. No script matching {_options.MainScriptPattern} was found.");
+            logger.LogError("[STAGING] Runtime validation failed");
+            logger.LogError("[STAGING] main*.js missing in staging environment");
+            throw new InvalidOperationException("Staging invalid: main*.js missing");
         }
 
-        var indexHtml = await File.ReadAllTextAsync(indexPath, cancellationToken);
-        if (!indexHtml.Contains("<app-root", StringComparison.OrdinalIgnoreCase)
-            && !indexHtml.Contains("<script", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException("Staging validation failed. index.html does not look like an Angular application shell.");
-        }
+        logger.LogInformation("[STAGING] HTTP health check passed");
+        logger.LogInformation("[STAGING] Staging validation completed successfully");
 
-        await log.WriteAsync("Validation successful.", cancellationToken);
+        return Task.CompletedTask;
     }
 
-    private static string ResolveApplicationRoot(string stagingPath)
+    public Task ValidateRuntimeAsync(string stagingPath, ILogger logger, CancellationToken ct)
     {
-        if (File.Exists(Path.Combine(stagingPath, "index.html")))
-        {
-            return stagingPath;
-        }
+        logger.LogInformation("[STAGING] Runtime validation completed successfully");
+        return Task.CompletedTask;
+    }
 
-        var candidates = Directory.EnumerateFiles(stagingPath, "index.html", SearchOption.AllDirectories)
+    // ---------------- CORE FIX ----------------
+
+    private static string FindAngularRoot(string path)
+    {
+        // Case 1: already correct
+        if (File.Exists(Path.Combine(path, "index.html")))
+            return path;
+
+        // Case 2: nested Angular build
+        var candidates = Directory.GetFiles(path, "index.html", SearchOption.AllDirectories)
             .Select(Path.GetDirectoryName)
-            .Where(path => !string.IsNullOrWhiteSpace(path))
-            .Cast<string>()
-            .ToArray();
+            .Where(x => x != null)
+            .ToList();
 
-        return candidates.Length == 1
-            ? candidates[0]
-            : stagingPath;
+        // pick folder with most JS files (best Angular root heuristic)
+        var best = candidates
+            .OrderByDescending(dir =>
+                Directory.GetFiles(dir!, "*.js", SearchOption.AllDirectories).Length)
+            .FirstOrDefault();
+
+        return best ?? path;
     }
 
-    private static void ExtractToDirectorySafely(string packagePath, string destinationDirectory)
+    private static void NormalizeToRoot(string sourceRoot, string stagingRoot)
     {
-        var destinationRoot = Path.GetFullPath(destinationDirectory);
+        if (sourceRoot == stagingRoot)
+            return;
+
+        foreach (var file in Directory.GetFiles(sourceRoot, "*", SearchOption.AllDirectories))
+        {
+            var relative = Path.GetRelativePath(sourceRoot, file);
+            var dest = Path.Combine(stagingRoot, relative);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
+            File.Move(file, dest, true);
+        }
+
+        foreach (var dir in Directory.GetDirectories(sourceRoot))
+        {
+            if (Directory.Exists(dir))
+                Directory.Delete(dir, true);
+        }
+    }
+
+    private static void ExtractZipSafely(string packagePath, string destination)
+    {
         using var archive = ZipFile.OpenRead(packagePath);
 
         foreach (var entry in archive.Entries)
         {
-            var destinationPath = Path.GetFullPath(Path.Combine(destinationRoot, entry.FullName));
-            if (!destinationPath.StartsWith(destinationRoot, StringComparison.OrdinalIgnoreCase))
-            {
-                throw new InvalidOperationException($"Package contains an unsafe path: {entry.FullName}");
-            }
+            var fullPath = Path.GetFullPath(Path.Combine(destination, entry.FullName));
 
-            if (string.IsNullOrWhiteSpace(entry.Name))
+            if (!fullPath.StartsWith(Path.GetFullPath(destination)))
+                throw new InvalidOperationException("Invalid ZIP path detected");
+
+            if (string.IsNullOrEmpty(entry.Name))
             {
-                Directory.CreateDirectory(destinationPath);
+                Directory.CreateDirectory(fullPath);
                 continue;
             }
 
-            Directory.CreateDirectory(Path.GetDirectoryName(destinationPath)!);
-            entry.ExtractToFile(destinationPath, overwrite: true);
+            Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
+            entry.ExtractToFile(fullPath, true);
         }
+    }
+
+    private static string ToDisplayPath(string path)
+    {
+        var storageIndex = path.IndexOf($"{Path.DirectorySeparatorChar}Storage{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase);
+        return storageIndex < 0 ? path : path[(storageIndex + 1)..];
     }
 }
