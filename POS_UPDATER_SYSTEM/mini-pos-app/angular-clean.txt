@@ -1,0 +1,2161 @@
+Folder PATH listing
+Volume serial number is 0000004D 0A33:49E0
+C:.
+|   \---cache
+|       \---21.2.11
+|           \---mini-pos-app
+|               \---vite
+|                   \---deps
++---.vscode
+|   \---mini-pos-app
+|       \---browser
+|   +---.bin
+|   +---@acemir
+|   |   \---cssom
+|   |       +---build
+|   |       \---lib
+|   +---@algolia
+|   |   +---abtesting
+|   |   |       +---builds
+|   |   |       \---src
+|   |   +---client-abtesting
+|   |   |       +---builds
+|   |   |       \---src
+|   |   +---client-analytics
+|   |   |       +---builds
+|   |   |       \---src
+|   |   +---client-common
+|   |   +---client-insights
+|   |   |       +---builds
+|   |   |       \---src
+|   |   +---client-personalization
+|   |   |       +---builds
+|   |   |       \---src
+|   |   +---client-query-suggestions
+|   |   |       +---builds
+|   |   |       \---src
+|   |   +---client-search
+|   |   |       +---builds
+|   |   |       \---src
+|   |   +---ingestion
+|   |   |       +---builds
+|   |   |       \---src
+|   |   +---monitoring
+|   |   |       +---builds
+|   |   |       \---src
+|   |   +---recommend
+|   |   |       +---builds
+|   |   |       \---src
+|   |   +---requester-browser-xhr
+|   |   +---requester-fetch
+|   |   \---requester-node-http
+|   +---@ampproject
+|   |   \---remapping
+|   |           \---types
+|   +---@angular
+|   |   +---build
+|   |   |   +---private
+|   |   |   \---src
+|   |   |       +---builders
+|   |   |       |   +---application
+|   |   |       |   +---dev-server
+|   |   |       |   |   \---vite
+|   |   |       |   +---extract-i18n
+|   |   |       |   +---karma
+|   |   |       |   |   \---polyfills
+|   |   |       |   +---ng-packagr
+|   |   |       |   \---unit-test
+|   |   |       |       \---runners
+|   |   |       |           +---karma
+|   |   |       |           \---vitest
+|   |   |       +---tools
+|   |   |       |   +---angular
+|   |   |       |   |   +---compilation
+|   |   |       |   |   \---transformers
+|   |   |       |   +---babel
+|   |   |       |   |   \---plugins
+|   |   |       |   +---esbuild
+|   |   |       |   |   +---angular
+|   |   |       |   |   \---stylesheets
+|   |   |       |   +---sass
+|   |   |       |   \---vite
+|   |   |       |       +---middlewares
+|   |   |       |       \---plugins
+|   |   |       \---utils
+|   |   |           +---index-file
+|   |   |           \---server-rendering
+|   |   |               \---esm-in-memory-loader
+|   |   +---cli
+|   |   |   +---bin
+|   |   |   +---lib
+|   |   |   |   +---cli
+|   |   |   |   \---config
+|   |   |   \---src
+|   |   |       +---analytics
+|   |   |       +---command-builder
+|   |   |       |   \---utilities
+|   |   |       +---commands
+|   |   |       |   +---add
+|   |   |       |   +---analytics
+|   |   |       |   |   +---info
+|   |   |       |   |   \---settings
+|   |   |       |   +---build
+|   |   |       |   +---cache
+|   |   |       |   |   +---clean
+|   |   |       |   |   +---info
+|   |   |       |   |   \---settings
+|   |   |       |   +---completion
+|   |   |       |   +---config
+|   |   |       |   +---deploy
+|   |   |       |   +---e2e
+|   |   |       |   +---extract-i18n
+|   |   |       |   +---generate
+|   |   |       |   +---lint
+|   |   |       |   +---make-this-awesome
+|   |   |       |   +---mcp
+|   |   |       |   |   +---resources
+|   |   |       |   |   \---tools
+|   |   |       |   |       +---devserver
+|   |   |       |   |       +---examples
+|   |   |       |   |       \---onpush-zoneless-migration
+|   |   |       |   +---new
+|   |   |       |   +---run
+|   |   |       |   +---serve
+|   |   |       |   +---test
+|   |   |       |   +---update
+|   |   |       |   |   +---schematic
+|   |   |       |   |   \---utilities
+|   |   |       |   \---version
+|   |   |       +---package-managers
+|   |   |       \---utilities
+|   |   +---common
+|   |   |   +---fesm2022
+|   |   |   +---locales
+|   |   |   |   +---extra
+|   |   |   |   \---global
+|   |   |   \---types
+|   |   +---compiler
+|   |   |   +---fesm2022
+|   |   |   \---types
+|   |   +---compiler-cli
+|   |   |   +---bundles
+|   |   |   |   +---linker
+|   |   |   |   |   \---babel
+|   |   |   |   +---private
+|   |   |   |   \---src
+|   |   |   |       \---bin
+|   |   |   +---linker
+|   |   |   |   +---babel
+|   |   |   |   |   \---src
+|   |   |   |   |       \---ast
+|   |   |   |   \---src
+|   |   |   |       +---ast
+|   |   |   |       |   \---typescript
+|   |   |   |       \---file_linker
+|   |   |   |           +---emit_scopes
+|   |   |   |           \---partial_linkers
+|   |   |   +---private
+|   |   |   \---src
+|   |   |       +---bin
+|   |   |       +---ngtsc
+|   |   |       |   +---annotations
+|   |   |       |   |   +---common
+|   |   |       |   |   |   \---src
+|   |   |       |   |   +---component
+|   |   |       |   |   |   \---src
+|   |   |       |   |   +---directive
+|   |   |       |   |   |   \---src
+|   |   |       |   |   +---ng_module
+|   |   |       |   |   |   \---src
+|   |   |       |   |   \---src
+|   |   |       |   +---core
+|   |   |       |   |   +---api
+|   |   |       |   |   |   \---src
+|   |   |       |   |   \---src
+|   |   |       |   +---cycles
+|   |   |       |   |   \---src
+|   |   |       |   +---diagnostics
+|   |   |       |   |   \---src
+|   |   |       |   +---docs
+|   |   |       |   |   \---src
+|   |   |       |   +---entry_point
+|   |   |       |   |   \---src
+|   |   |       |   +---file_system
+|   |   |       |   |   +---src
+|   |   |       |   |   \---testing
+|   |   |       |   |       \---src
+|   |   |       |   +---hmr
+|   |   |       |   |   \---src
+|   |   |       |   +---imports
+|   |   |       |   |   \---src
+|   |   |       |   +---incremental
+|   |   |       |   |   +---semantic_graph
+|   |   |       |   |   |   \---src
+|   |   |       |   |   \---src
+|   |   |       |   +---indexer
+|   |   |       |   |   \---src
+|   |   |       |   +---logging
+|   |   |       |   |   \---src
+|   |   |       |   +---metadata
+|   |   |       |   |   \---src
+|   |   |       |   +---partial_evaluator
+|   |   |       |   |   \---src
+|   |   |       |   +---perf
+|   |   |       |   |   \---src
+|   |   |       |   +---program_driver
+|   |   |       |   |   \---src
+|   |   |       |   +---reflection
+|   |   |       |   |   \---src
+|   |   |       |   +---resource
+|   |   |       |   |   \---src
+|   |   |       |   +---scope
+|   |   |       |   |   \---src
+|   |   |       |   +---shims
+|   |   |       |   |   \---src
+|   |   |       |   +---sourcemaps
+|   |   |       |   |   \---src
+|   |   |       |   +---transform
+|   |   |       |   |   +---jit
+|   |   |       |   |   |   \---src
+|   |   |       |   |   |       \---initializer_api_transforms
+|   |   |       |   |   \---src
+|   |   |       |   +---translator
+|   |   |       |   |   \---src
+|   |   |       |   |       +---api
+|   |   |       |   |       \---import_manager
+|   |   |       |   +---typecheck
+|   |   |       |   |   +---api
+|   |   |       |   |   +---diagnostics
+|   |   |       |   |   |   \---src
+|   |   |       |   |   +---extended
+|   |   |       |   |   |   +---api
+|   |   |       |   |   |   +---checks
+|   |   |       |   |   |   |   +---defer_trigger_misconfiguration
+|   |   |       |   |   |   |   +---interpolated_signal_not_invoked
+|   |   |       |   |   |   |   +---invalid_banana_in_box
+|   |   |       |   |   |   |   +---missing_control_flow_directive
+|   |   |       |   |   |   |   +---missing_ngforof_let
+|   |   |       |   |   |   |   +---missing_structural_directive
+|   |   |       |   |   |   |   +---nullish_coalescing_not_nullable
+|   |   |       |   |   |   |   +---optional_chain_not_nullable
+|   |   |       |   |   |   |   +---skip_hydration_not_static
+|   |   |       |   |   |   |   +---suffix_not_supported
+|   |   |       |   |   |   |   +---text_attribute_not_binding
+|   |   |       |   |   |   |   +---uninvoked_function_in_event_binding
+|   |   |       |   |   |   |   +---uninvoked_function_in_text_interpolation
+|   |   |       |   |   |   |   +---uninvoked_track_function
+|   |   |       |   |   |   |   +---unparenthesized_nullish_coalescing
+|   |   |       |   |   |   |   \---unused_let_declaration
+|   |   |       |   |   |   \---src
+|   |   |       |   |   +---src
+|   |   |       |   |   |   \---ops
+|   |   |       |   |   \---template_semantics
+|   |   |       |   |       +---api
+|   |   |       |   |       \---src
+|   |   |       |   +---util
+|   |   |       |   |   \---src
+|   |   |       |   +---validation
+|   |   |       |   |   \---src
+|   |   |       |   |       \---rules
+|   |   |       |   \---xi18n
+|   |   |       |       \---src
+|   |   |       \---transformers
+|   |   +---core
+|   |   |   +---fesm2022
+|   |   |   +---resources
+|   |   |   +---schematics
+|   |   |   |   +---bundles
+|   |   |   |   +---migrations
+|   |   |   |   |   +---common-to-standalone-migration
+|   |   |   |   |   +---control-flow-migration
+|   |   |   |   |   +---ngclass-to-class-migration
+|   |   |   |   |   +---ngstyle-to-style-migration
+|   |   |   |   |   \---router-testing-module-migration
+|   |   |   |   \---ng-generate
+|   |   |   |       +---cleanup-unused-imports
+|   |   |   |       +---inject-migration
+|   |   |   |       +---output-migration
+|   |   |   |       +---route-lazy-loading
+|   |   |   |       +---self-closing-tags-migration
+|   |   |   |       +---signal-input-migration
+|   |   |   |       +---signal-queries-migration
+|   |   |   |       +---signals
+|   |   |   |       \---standalone-migration
+|   |   |   \---types
+|   |   +---forms
+|   |   |   +---fesm2022
+|   |   |   +---resources
+|   |   |   \---types
+|   |   +---platform-browser
+|   |   |   +---fesm2022
+|   |   |   \---types
+|   |   \---router
+|   |       +---fesm2022
+|   |       \---types
+|   +---@angular-devkit
+|   |   +---architect
+|   |   |   +---bin
+|   |   |   +---builders
+|   |   |   +---node
+|   |   |   |   \---jobs
+|   |   |   +---src
+|   |   |   |   \---jobs
+|   |   |   \---testing
+|   |   +---core
+|   |   |   +---node
+|   |   |   |   \---testing
+|   |   |   \---src
+|   |   |       +---json
+|   |   |       |   \---schema
+|   |   |       +---logger
+|   |   |       +---utils
+|   |   |       +---virtual-fs
+|   |   |       |   \---host
+|   |   |       \---workspace
+|   |   |           \---json
+|   |   \---schematics
+|   |       +---src
+|   |       |   +---engine
+|   |       |   +---exception
+|   |       |   +---formats
+|   |       |   +---rules
+|   |       |   +---sink
+|   |       |   +---tree
+|   |       |   \---workflow
+|   |       +---tasks
+|   |       |   +---node
+|   |       |   +---package-manager
+|   |       |   +---repo-init
+|   |       |   \---run-schematic
+|   |       +---testing
+|   |       \---tools
+|   |           \---workflow
+|   +---@asamuzakjp
+|   |   +---css-color
+|   |   |   |   \---esm
+|   |   |   |       \---js
+|   |   |   \---src
+|   |   |       \---js
+|   |   +---dom-selector
+|   |   |   |   \---cjs
+|   |   |   |   \---lru-cache
+|   |   |   |           +---commonjs
+|   |   |   |           |   +---browser
+|   |   |   |           |   \---node
+|   |   |   |           \---esm
+|   |   |   |               +---browser
+|   |   |   |               \---node
+|   |   |   +---src
+|   |   |   |   \---js
+|   |   |   \---types
+|   |   |       \---js
+|   |   +---generational-cache
+|   |   |   +---src
+|   |   |   \---types
+|   |   \---nwsapi
+|   |       \---src
+|   +---@babel
+|   |   +---code-frame
+|   |   |   \---lib
+|   |   +---compat-data
+|   |   |   \---data
+|   |   +---core
+|   |   |   +---lib
+|   |   |   |   +---config
+|   |   |   |   |   +---files
+|   |   |   |   |   +---helpers
+|   |   |   |   |   \---validation
+|   |   |   |   +---errors
+|   |   |   |   +---gensync-utils
+|   |   |   |   +---parser
+|   |   |   |   |   \---util
+|   |   |   |   +---tools
+|   |   |   |   +---transformation
+|   |   |   |   |   +---file
+|   |   |   |   |   \---util
+|   |   |   |   \---vendor
+|   |   |   |   +---.bin
+|   |   |   |   +---convert-source-map
+|   |   |   |   \---semver
+|   |   |   |       \---bin
+|   |   |   \---src
+|   |   |       \---config
+|   |   |           \---files
+|   |   +---generator
+|   |   |   \---lib
+|   |   |       +---generators
+|   |   |       \---node
+|   |   +---helper-annotate-as-pure
+|   |   |   \---lib
+|   |   +---helper-compilation-targets
+|   |   |   +---lib
+|   |   |       +---.bin
+|   |   |       \---semver
+|   |   |           \---bin
+|   |   +---helper-globals
+|   |   |   \---data
+|   |   +---helper-module-imports
+|   |   |   \---lib
+|   |   +---helper-module-transforms
+|   |   |   \---lib
+|   |   +---helper-split-export-declaration
+|   |   |   \---lib
+|   |   +---helper-string-parser
+|   |   |   \---lib
+|   |   +---helper-validator-identifier
+|   |   |   \---lib
+|   |   +---helper-validator-option
+|   |   |   \---lib
+|   |   +---helpers
+|   |   |   \---lib
+|   |   |       \---helpers
+|   |   +---parser
+|   |   |   +---bin
+|   |   |   +---lib
+|   |   |   \---typings
+|   |   +---template
+|   |   |   \---lib
+|   |   +---traverse
+|   |   |   \---lib
+|   |   |       +---path
+|   |   |       |   +---inference
+|   |   |       |   \---lib
+|   |   |       \---scope
+|   |   |           \---lib
+|   |   \---types
+|   |       \---lib
+|   |           +---asserts
+|   |           |   \---generated
+|   |           +---ast-types
+|   |           |   \---generated
+|   |           +---builders
+|   |           |   +---flow
+|   |           |   +---generated
+|   |           |   +---react
+|   |           |   \---typescript
+|   |           +---clone
+|   |           +---comments
+|   |           +---constants
+|   |           |   \---generated
+|   |           +---converters
+|   |           +---definitions
+|   |           +---modifications
+|   |           |   +---flow
+|   |           |   \---typescript
+|   |           +---retrievers
+|   |           +---traverse
+|   |           +---utils
+|   |           |   \---react
+|   |           \---validators
+|   |               +---generated
+|   |               \---react
+|   +---@bramus
+|   |   \---specificity
+|   |       +---bin
+|   |       \---src
+|   |           +---core
+|   |           \---util
+|   +---@csstools
+|   |   +---color-helpers
+|   |   +---css-calc
+|   |   +---css-color-parser
+|   |   +---css-parser-algorithms
+|   |   +---css-syntax-patches-for-csstree
+|   |   \---css-tokenizer
+|   +---@esbuild
+|   |   \---win32-x64
+|   +---@exodus
+|   |   \---bytes
+|   |       \---fallback
+|   +---@gar
+|   |   \---promise-retry
+|   |       \---lib
+|   +---@harperfast
+|   |   \---extended-iterable
+|   +---@hono
+|   |   \---node-server
+|   |           \---utils
+|   |               \---response
+|   +---@inquirer
+|   |   +---ansi
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---checkbox
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---confirm
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---core
+|   |   |       +---commonjs
+|   |   |       |   \---lib
+|   |   |       |       \---pagination
+|   |   |       \---esm
+|   |   |           \---lib
+|   |   |               \---pagination
+|   |   +---editor
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---expand
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---external-editor
+|   |   |       +---commonjs
+|   |   |       |   \---errors
+|   |   |       \---esm
+|   |   |           \---errors
+|   |   +---figures
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---input
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---number
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---password
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---prompts
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---rawlist
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---search
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---select
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   \---type
+|   |           +---commonjs
+|   |           \---esm
+|   +---@isaacs
+|   |   \---fs-minipass
+|   |           +---commonjs
+|   |           \---esm
+|   +---@istanbuljs
+|   |   \---schema
+|   +---@jridgewell
+|   |   +---gen-mapping
+|   |   |   |   \---types
+|   |   |   +---src
+|   |   |   \---types
+|   |   +---remapping
+|   |   |   +---src
+|   |   |   \---types
+|   |   +---resolve-uri
+|   |   |       \---types
+|   |   +---sourcemap-codec
+|   |   |   +---src
+|   |   |   \---types
+|   |   \---trace-mapping
+|   |       +---src
+|   |       \---types
+|   +---@listr2
+|   |   \---prompt-adapter-inquirer
+|   +---@lmdb
+|   |   \---lmdb-win32-x64
+|   +---@modelcontextprotocol
+|   |   \---sdk
+|   |           +---cjs
+|   |           |   +---client
+|   |           |   +---examples
+|   |           |   |   +---client
+|   |           |   |   +---server
+|   |           |   |   \---shared
+|   |           |   +---experimental
+|   |           |   |   \---tasks
+|   |           |   |       \---stores
+|   |           |   +---server
+|   |           |   |   +---auth
+|   |           |   |   |   +---handlers
+|   |           |   |   |   +---middleware
+|   |           |   |   |   \---providers
+|   |           |   |   \---middleware
+|   |           |   +---shared
+|   |           |   \---validation
+|   |           \---esm
+|   |               +---client
+|   |               +---examples
+|   |               |   +---client
+|   |               |   +---server
+|   |               |   \---shared
+|   |               +---experimental
+|   |               |   \---tasks
+|   |               |       \---stores
+|   |               +---server
+|   |               |   +---auth
+|   |               |   |   +---handlers
+|   |               |   |   +---middleware
+|   |               |   |   \---providers
+|   |               |   \---middleware
+|   |               +---shared
+|   |               \---validation
+|   +---@msgpackr-extract
+|   |   \---msgpackr-extract-win32-x64
+|   +---@napi-rs
+|   |   +---nice
+|   |   \---nice-win32-x64-msvc
+|   +---@npmcli
+|   |   +---agent
+|   |   |   +---lib
+|   |   |       \---lru-cache
+|   |   |               +---commonjs
+|   |   |               |   +---browser
+|   |   |               |   \---node
+|   |   |               \---esm
+|   |   |                   +---browser
+|   |   |                   \---node
+|   |   +---fs
+|   |   |   \---lib
+|   |   |       +---common
+|   |   |       \---cp
+|   |   +---git
+|   |   |   +---lib
+|   |   |       +---.bin
+|   |   |       +---isexe
+|   |   |       |       +---commonjs
+|   |   |       |       \---esm
+|   |   |       +---lru-cache
+|   |   |       |       +---commonjs
+|   |   |       |       |   +---browser
+|   |   |       |       |   \---node
+|   |   |       |       \---esm
+|   |   |       |           +---browser
+|   |   |       |           \---node
+|   |   |       \---which
+|   |   |           +---bin
+|   |   |           \---lib
+|   |   +---installed-package-contents
+|   |   |   +---bin
+|   |   |   \---lib
+|   |   +---node-gyp
+|   |   |   \---lib
+|   |   +---package-json
+|   |   |   \---lib
+|   |   +---promise-spawn
+|   |   |   +---lib
+|   |   |       +---.bin
+|   |   |       +---isexe
+|   |   |       |       +---commonjs
+|   |   |       |       \---esm
+|   |   |       \---which
+|   |   |           +---bin
+|   |   |           \---lib
+|   |   +---redact
+|   |   |   \---lib
+|   |   \---run-script
+|   |       \---lib
+|   |           \---node-gyp-bin
+|   +---@oxc-project
+|   |   \---types
+|   +---@parcel
+|   |   +---watcher
+|   |   |   |   \---node-addon-api
+|   |   |   |       \---tools
+|   |   |   +---scripts
+|   |   |   \---src
+|   |   |       +---kqueue
+|   |   |       +---linux
+|   |   |       +---macos
+|   |   |       +---shared
+|   |   |       +---unix
+|   |   |       +---wasm
+|   |   |       +---watchman
+|   |   |       \---windows
+|   |   \---watcher-win32-x64
+|   +---@rolldown
+|   |   +---binding-win32-x64-msvc
+|   |   \---pluginutils
+|   |           \---filter
+|   +---@rollup
+|   |   +---rollup-win32-x64-gnu
+|   |   \---rollup-win32-x64-msvc
+|   +---@schematics
+|   |   \---angular
+|   |       +---ai-config
+|   |       |   \---files
+|   |       +---app-shell
+|   |       +---application
+|   |       |   \---files
+|   |       |       +---common-files
+|   |       |       |   +---public
+|   |       |       |   \---src
+|   |       |       |       \---app
+|   |       |       +---module-files
+|   |       |       |   \---src
+|   |       |       |       \---app
+|   |       |       \---standalone-files
+|   |       |           \---src
+|   |       |               \---app
+|   |       +---class
+|   |       |   \---files
+|   |       +---component
+|   |       |   \---files
+|   |       |       \---__name@dasherize@if-flat__
+|   |       +---config
+|   |       |   \---files
+|   |       +---directive
+|   |       |   \---files
+|   |       +---e2e
+|   |       |   \---files
+|   |       |       \---src
+|   |       +---enum
+|   |       |   \---files
+|   |       +---environments
+|   |       +---guard
+|   |       |   +---implements-files
+|   |       |   \---type-files
+|   |       +---interceptor
+|   |       |   +---class-files
+|   |       |   \---functional-files
+|   |       +---interface
+|   |       |   \---files
+|   |       +---library
+|   |       |   \---files
+|   |       |       \---src
+|   |       +---migrations
+|   |       |   +---karma
+|   |       |   +---update-module-resolution
+|   |       |   +---update-typescript-lib
+|   |       |   \---use-application-builder
+|   |       +---module
+|   |       |   \---files
+|   |       |       \---__name@dasherize@if-flat__
+|   |       +---ng-new
+|   |       +---pipe
+|   |       |   \---files
+|   |       +---refactor
+|   |       |   \---jasmine-vitest
+|   |       |       +---transformers
+|   |       |       \---utils
+|   |       +---resolver
+|   |       |   +---class-files
+|   |       |   \---functional-files
+|   |       +---server
+|   |       |   \---files
+|   |       |       +---application-builder
+|   |       |       |   +---ngmodule-src
+|   |       |       |   |   \---app
+|   |       |       |   \---standalone-src
+|   |       |       |       \---app
+|   |       |       \---server-builder
+|   |       |           +---ngmodule-src
+|   |       |           |   \---app
+|   |       |           +---root
+|   |       |           \---standalone-src
+|   |       |               \---app
+|   |       +---service
+|   |       |   \---files
+|   |       +---service-worker
+|   |       |   \---files
+|   |       +---ssr
+|   |       |   \---files
+|   |       |       +---application-builder
+|   |       |       \---server-builder
+|   |       +---tailwind
+|   |       |   \---files
+|   |       +---third_party
+|   |       |   \---github.com
+|   |       |       \---Microsoft
+|   |       |           \---TypeScript
+|   |       |               \---lib
+|   |       +---utility
+|   |       |   +---latest-versions
+|   |       |   \---standalone
+|   |       +---vitest-browser
+|   |       +---web-worker
+|   |       |   \---files
+|   |       |       +---worker
+|   |       |       \---worker-tsconfig
+|   |       \---workspace
+|   |           \---files
+|   |               \---__dot__vscode
+|   +---@sigstore
+|   |   +---bundle
+|   |   +---core
+|   |   |       +---asn1
+|   |   |       +---rfc3161
+|   |   |       \---x509
+|   |   +---protobuf-specs
+|   |   |       +---rekor
+|   |   |       |   \---v2
+|   |   |       \---__generated__
+|   |   |           +---google
+|   |   |           |   +---api
+|   |   |           |   \---protobuf
+|   |   |           \---rekor
+|   |   |               \---v2
+|   |   +---sign
+|   |   |       +---bundler
+|   |   |       +---external
+|   |   |       +---identity
+|   |   |       +---signer
+|   |   |       |   \---fulcio
+|   |   |       +---types
+|   |   |       +---util
+|   |   |       \---witness
+|   |   |           +---tlog
+|   |   |           \---tsa
+|   |   +---tuf
+|   |   \---verify
+|   |           +---bundle
+|   |           +---key
+|   |           +---timestamp
+|   |           +---tlog
+|   |           \---trust
+|   +---@standard-schema
+|   |   \---spec
+|   +---@tufjs
+|   |   +---canonical-json
+|   |   |   \---lib
+|   |   \---models
+|   |           \---utils
+|   +---@types
+|   |   +---chai
+|   |   +---deep-eql
+|   |   \---estree
+|   +---@vitejs
+|   |   \---plugin-basic-ssl
+|   |           \---chunks
+|   +---@vitest
+|   |   +---expect
+|   |   +---mocker
+|   |   +---pretty-format
+|   |   +---runner
+|   |   +---snapshot
+|   |   +---spy
+|   |   \---utils
+|   |       |   \---source-map
+|   |           \---convert-source-map
+|   +---@yarnpkg
+|   |   \---lockfile
+|   +---abbrev
+|   |   \---lib
+|   +---accepts
+|   +---agent-base
+|   +---ajv
+|   |   |   +---compile
+|   |   |   |   +---codegen
+|   |   |   |   +---jtd
+|   |   |   |   \---validate
+|   |   |   +---refs
+|   |   |   |   +---json-schema-2019-09
+|   |   |   |   |   \---meta
+|   |   |   |   \---json-schema-2020-12
+|   |   |   |       \---meta
+|   |   |   +---runtime
+|   |   |   +---standalone
+|   |   |   +---types
+|   |   |   \---vocabularies
+|   |   |       +---applicator
+|   |   |       +---core
+|   |   |       +---discriminator
+|   |   |       +---dynamic
+|   |   |       +---format
+|   |   |       +---jtd
+|   |   |       +---unevaluated
+|   |   |       \---validation
+|   |   \---lib
+|   |       +---compile
+|   |       |   +---codegen
+|   |       |   +---jtd
+|   |       |   \---validate
+|   |       +---refs
+|   |       |   +---json-schema-2019-09
+|   |       |   |   \---meta
+|   |       |   \---json-schema-2020-12
+|   |       |       \---meta
+|   |       +---runtime
+|   |       +---standalone
+|   |       +---types
+|   |       \---vocabularies
+|   |           +---applicator
+|   |           +---core
+|   |           +---discriminator
+|   |           +---dynamic
+|   |           +---format
+|   |           +---jtd
+|   |           +---unevaluated
+|   |           \---validation
+|   +---ajv-formats
+|   |   \---src
+|   +---algoliasearch
+|   |       \---lite
+|   |           +---builds
+|   |           \---src
+|   +---ansi-escapes
+|   +---ansi-regex
+|   +---ansi-styles
+|   +---assertion-error
+|   +---balanced-match
+|   |       +---commonjs
+|   |       \---esm
+|   +---baseline-browser-mapping
+|   +---beasties
+|   +---bidi-js
+|   |   \---src
+|   |       +---data
+|   |       \---util
+|   +---body-parser
+|   |   \---lib
+|   |       \---types
+|   +---boolbase
+|   +---brace-expansion
+|   |       +---commonjs
+|   |       \---esm
+|   +---browserslist
+|   +---buffer-from
+|   +---bytes
+|   +---cacache
+|   |   +---lib
+|   |   |   +---content
+|   |   |   \---util
+|   |       \---lru-cache
+|   |               +---commonjs
+|   |               |   +---browser
+|   |               |   \---node
+|   |               \---esm
+|   |                   +---browser
+|   |                   \---node
+|   +---call-bind-apply-helpers
+|   |   +---.github
+|   |   \---test
+|   +---call-bound
+|   |   +---.github
+|   |   \---test
+|   +---caniuse-lite
+|   |   +---data
+|   |   |   +---features
+|   |   |   \---regions
+|   |       +---lib
+|   |       \---unpacker
+|   +---chai
+|   +---chalk
+|   |   \---source
+|   |       \---vendor
+|   |           +---ansi-styles
+|   |           \---supports-color
+|   +---chardet
+|   |   \---lib
+|   |       +---encoding
+|   |       \---fs
+|   +---chokidar
+|   +---chownr
+|   |       +---commonjs
+|   |       \---esm
+|   +---cli-cursor
+|   +---cli-spinners
+|   +---cli-truncate
+|   +---cli-width
+|   +---cliui
+|   |   +---build
+|   |   |   \---lib
+|   |       +---string-width
+|   |       \---wrap-ansi
+|   +---color-convert
+|   +---color-name
+|   +---colorette
+|   +---content-disposition
+|   +---content-type
+|   +---convert-source-map
+|   +---cookie
+|   +---cookie-signature
+|   +---cors
+|   |   \---lib
+|   +---cross-spawn
+|   |   \---lib
+|   |       \---util
+|   +---css-select
+|   |   |   +---commonjs
+|   |   |   |   +---helpers
+|   |   |   |   \---pseudo-selectors
+|   |   |   \---esm
+|   |   |       +---helpers
+|   |   |       \---pseudo-selectors
+|   |   \---src
+|   |       +---helpers
+|   |       \---pseudo-selectors
+|   +---css-tree
+|   |   +---cjs
+|   |   |   +---convertor
+|   |   |   +---definition-syntax
+|   |   |   +---generator
+|   |   |   +---lexer
+|   |   |   +---parser
+|   |   |   +---syntax
+|   |   |   |   +---atrule
+|   |   |   |   +---config
+|   |   |   |   +---function
+|   |   |   |   +---node
+|   |   |   |   +---pseudo
+|   |   |   |   \---scope
+|   |   |   +---tokenizer
+|   |   |   +---utils
+|   |   |   \---walker
+|   |   +---data
+|   |   \---lib
+|   |       +---convertor
+|   |       +---definition-syntax
+|   |       +---generator
+|   |       +---lexer
+|   |       +---parser
+|   |       +---syntax
+|   |       |   +---atrule
+|   |       |   +---config
+|   |       |   +---function
+|   |       |   +---node
+|   |       |   +---pseudo
+|   |       |   \---scope
+|   |       +---tokenizer
+|   |       +---utils
+|   |       \---walker
+|   +---css-what
+|   |   |   +---commonjs
+|   |   |   \---esm
+|   |   \---src
+|   |       \---__fixtures__
+|   +---cssstyle
+|   |   +---lib
+|   |   |   +---generated
+|   |   |   +---properties
+|   |   |   \---utils
+|   |       \---lru-cache
+|   |               +---commonjs
+|   |               |   +---browser
+|   |               |   \---node
+|   |               \---esm
+|   |                   +---browser
+|   |                   \---node
+|   +---data-urls
+|   |   \---lib
+|   +---debug
+|   |   \---src
+|   +---decimal.js
+|   +---depd
+|   |   \---lib
+|   |       \---browser
+|   +---detect-libc
+|   |   \---lib
+|   +---dom-serializer
+|   |   \---lib
+|   |       \---esm
+|   +---domelementtype
+|   |   \---lib
+|   |       \---esm
+|   +---domhandler
+|   |   \---lib
+|   |       \---esm
+|   +---domutils
+|   |   \---lib
+|   |       \---esm
+|   +---dunder-proto
+|   |   +---.github
+|   |   \---test
+|   +---ee-first
+|   +---electron-to-chromium
+|   +---emoji-regex
+|   +---encodeurl
+|   +---entities
+|   |   \---lib
+|   |       +---esm
+|   |       |   \---generated
+|   |       \---generated
+|   +---env-paths
+|   +---environment
+|   +---err-code
+|   |   \---test
+|   +---es-define-property
+|   |   +---.github
+|   |   \---test
+|   +---es-errors
+|   |   +---.github
+|   |   \---test
+|   +---es-module-lexer
+|   |   \---types
+|   +---es-object-atoms
+|   |   +---.github
+|   |   \---test
+|   +---esbuild
+|   |   +---bin
+|   |   \---lib
+|   +---escalade
+|   |   \---sync
+|   +---escape-html
+|   +---estree-walker
+|   |   +---src
+|   |   \---types
+|   +---etag
+|   +---eventemitter3
+|   +---eventsource
+|   |   \---src
+|   +---eventsource-parser
+|   |   \---src
+|   +---expect-type
+|   +---exponential-backoff
+|   |   |   +---delay
+|   |   |   |   +---always
+|   |   |   |   \---skip-first
+|   |   |   \---jitter
+|   |   |       +---full
+|   |   |       \---no
+|   |   \---src
+|   |       +---delay
+|   |       |   +---always
+|   |       |   \---skip-first
+|   |       \---jitter
+|   |           +---full
+|   |           \---no
+|   +---express
+|   |   \---lib
+|   +---express-rate-limit
+|   +---fast-deep-equal
+|   |   \---es6
+|   +---fast-uri
+|   |   +---.github
+|   |   |   \---workflows
+|   |   +---benchmark
+|   |   +---lib
+|   |   +---test
+|   |   |   \---fixtures
+|   |   \---types
+|   +---fdir
+|   +---finalhandler
+|   +---forwarded
+|   +---fresh
+|   +---fs-minipass
+|   |   \---lib
+|   +---function-bind
+|   |   +---.github
+|   |   \---test
+|   +---gensync
+|   |   \---test
+|   +---get-caller-file
+|   +---get-east-asian-width
+|   +---get-intrinsic
+|   |   +---.github
+|   |   \---test
+|   +---get-proto
+|   |   +---.github
+|   |   \---test
+|   +---glob
+|   |       +---commonjs
+|   |       \---esm
+|   +---glob-to-regexp
+|   +---gopd
+|   |   +---.github
+|   |   \---test
+|   +---graceful-fs
+|   +---has-symbols
+|   |   +---.github
+|   |   \---test
+|   |       \---shams
+|   +---hasown
+|   |   \---.github
+|   +---hono
+|   |       +---adapter
+|   |       |   +---aws-lambda
+|   |       |   +---bun
+|   |       |   +---cloudflare-pages
+|   |       |   +---cloudflare-workers
+|   |       |   +---deno
+|   |       |   +---lambda-edge
+|   |       |   +---netlify
+|   |       |   +---service-worker
+|   |       |   \---vercel
+|   |       +---cjs
+|   |       |   +---adapter
+|   |       |   |   +---aws-lambda
+|   |       |   |   +---bun
+|   |       |   |   +---cloudflare-pages
+|   |       |   |   +---cloudflare-workers
+|   |       |   |   +---deno
+|   |       |   |   +---lambda-edge
+|   |       |   |   +---netlify
+|   |       |   |   +---service-worker
+|   |       |   |   \---vercel
+|   |       |   +---client
+|   |       |   +---helper
+|   |       |   |   +---accepts
+|   |       |   |   +---adapter
+|   |       |   |   +---conninfo
+|   |       |   |   +---cookie
+|   |       |   |   +---css
+|   |       |   |   +---dev
+|   |       |   |   +---factory
+|   |       |   |   +---html
+|   |       |   |   +---proxy
+|   |       |   |   +---route
+|   |       |   |   +---ssg
+|   |       |   |   +---streaming
+|   |       |   |   +---testing
+|   |       |   |   \---websocket
+|   |       |   +---jsx
+|   |       |   |   +---dom
+|   |       |   |   |   +---hooks
+|   |       |   |   |   \---intrinsic-element
+|   |       |   |   +---hooks
+|   |       |   |   \---intrinsic-element
+|   |       |   +---middleware
+|   |       |   |   +---basic-auth
+|   |       |   |   +---bearer-auth
+|   |       |   |   +---body-limit
+|   |       |   |   +---cache
+|   |       |   |   +---combine
+|   |       |   |   +---compress
+|   |       |   |   +---context-storage
+|   |       |   |   +---cors
+|   |       |   |   +---csrf
+|   |       |   |   +---etag
+|   |       |   |   +---ip-restriction
+|   |       |   |   +---jsx-renderer
+|   |       |   |   +---jwk
+|   |       |   |   +---jwt
+|   |       |   |   +---language
+|   |       |   |   +---logger
+|   |       |   |   +---method-override
+|   |       |   |   +---powered-by
+|   |       |   |   +---pretty-json
+|   |       |   |   +---request-id
+|   |       |   |   +---secure-headers
+|   |       |   |   +---serve-static
+|   |       |   |   +---timeout
+|   |       |   |   +---timing
+|   |       |   |   \---trailing-slash
+|   |       |   +---preset
+|   |       |   +---request
+|   |       |   +---router
+|   |       |   |   +---linear-router
+|   |       |   |   +---pattern-router
+|   |       |   |   +---reg-exp-router
+|   |       |   |   +---smart-router
+|   |       |   |   \---trie-router
+|   |       |   +---utils
+|   |       |   |   \---jwt
+|   |       |   \---validator
+|   |       +---client
+|   |       +---helper
+|   |       |   +---accepts
+|   |       |   +---adapter
+|   |       |   +---conninfo
+|   |       |   +---cookie
+|   |       |   +---css
+|   |       |   +---dev
+|   |       |   +---factory
+|   |       |   +---html
+|   |       |   +---proxy
+|   |       |   +---route
+|   |       |   +---ssg
+|   |       |   +---streaming
+|   |       |   +---testing
+|   |       |   \---websocket
+|   |       +---jsx
+|   |       |   +---dom
+|   |       |   |   +---hooks
+|   |       |   |   \---intrinsic-element
+|   |       |   +---hooks
+|   |       |   \---intrinsic-element
+|   |       +---middleware
+|   |       |   +---basic-auth
+|   |       |   +---bearer-auth
+|   |       |   +---body-limit
+|   |       |   +---cache
+|   |       |   +---combine
+|   |       |   +---compress
+|   |       |   +---context-storage
+|   |       |   +---cors
+|   |       |   +---csrf
+|   |       |   +---etag
+|   |       |   +---ip-restriction
+|   |       |   +---jsx-renderer
+|   |       |   +---jwk
+|   |       |   +---jwt
+|   |       |   +---language
+|   |       |   +---logger
+|   |       |   +---method-override
+|   |       |   +---powered-by
+|   |       |   +---pretty-json
+|   |       |   +---request-id
+|   |       |   +---secure-headers
+|   |       |   +---serve-static
+|   |       |   +---timeout
+|   |       |   +---timing
+|   |       |   \---trailing-slash
+|   |       +---preset
+|   |       +---request
+|   |       +---router
+|   |       |   +---linear-router
+|   |       |   +---pattern-router
+|   |       |   +---reg-exp-router
+|   |       |   +---smart-router
+|   |       |   \---trie-router
+|   |       +---types
+|   |       |   +---adapter
+|   |       |   |   +---aws-lambda
+|   |       |   |   +---bun
+|   |       |   |   +---cloudflare-pages
+|   |       |   |   +---cloudflare-workers
+|   |       |   |   +---deno
+|   |       |   |   +---lambda-edge
+|   |       |   |   +---netlify
+|   |       |   |   +---service-worker
+|   |       |   |   \---vercel
+|   |       |   +---client
+|   |       |   +---helper
+|   |       |   |   +---accepts
+|   |       |   |   +---adapter
+|   |       |   |   +---conninfo
+|   |       |   |   +---cookie
+|   |       |   |   +---css
+|   |       |   |   +---dev
+|   |       |   |   +---factory
+|   |       |   |   +---html
+|   |       |   |   +---proxy
+|   |       |   |   +---route
+|   |       |   |   +---ssg
+|   |       |   |   +---streaming
+|   |       |   |   +---testing
+|   |       |   |   \---websocket
+|   |       |   +---jsx
+|   |       |   |   +---dom
+|   |       |   |   |   +---hooks
+|   |       |   |   |   \---intrinsic-element
+|   |       |   |   +---hooks
+|   |       |   |   \---intrinsic-element
+|   |       |   +---middleware
+|   |       |   |   +---basic-auth
+|   |       |   |   +---bearer-auth
+|   |       |   |   +---body-limit
+|   |       |   |   +---cache
+|   |       |   |   +---combine
+|   |       |   |   +---compress
+|   |       |   |   +---context-storage
+|   |       |   |   +---cors
+|   |       |   |   +---csrf
+|   |       |   |   +---etag
+|   |       |   |   +---ip-restriction
+|   |       |   |   +---jsx-renderer
+|   |       |   |   +---jwk
+|   |       |   |   +---jwt
+|   |       |   |   +---language
+|   |       |   |   +---logger
+|   |       |   |   +---method-override
+|   |       |   |   +---powered-by
+|   |       |   |   +---pretty-json
+|   |       |   |   +---request-id
+|   |       |   |   +---secure-headers
+|   |       |   |   +---serve-static
+|   |       |   |   +---timeout
+|   |       |   |   +---timing
+|   |       |   |   \---trailing-slash
+|   |       |   +---preset
+|   |       |   +---request
+|   |       |   +---router
+|   |       |   |   +---linear-router
+|   |       |   |   +---pattern-router
+|   |       |   |   +---reg-exp-router
+|   |       |   |   +---smart-router
+|   |       |   |   \---trie-router
+|   |       |   +---utils
+|   |       |   |   \---jwt
+|   |       |   \---validator
+|   |       +---utils
+|   |       |   \---jwt
+|   |       \---validator
+|   +---hosted-git-info
+|   |   +---lib
+|   |       \---lru-cache
+|   |               +---commonjs
+|   |               |   +---browser
+|   |               |   \---node
+|   |               \---esm
+|   |                   +---browser
+|   |                   \---node
+|   +---html-encoding-sniffer
+|   |   \---lib
+|   +---htmlparser2
+|   |   |   +---commonjs
+|   |   |   \---esm
+|   |   |   \---entities
+|   |   |       |   +---commonjs
+|   |   |       |   |   +---generated
+|   |   |       |   |   \---internal
+|   |   |       |   \---esm
+|   |   |       |       +---generated
+|   |   |       |       \---internal
+|   |   |       \---src
+|   |   |           +---generated
+|   |   |           \---internal
+|   |   \---src
+|   +---http-cache-semantics
+|   +---http-errors
+|   +---http-proxy-agent
+|   +---https-proxy-agent
+|   +---iconv-lite
+|   |   +---encodings
+|   |   |   \---tables
+|   |   +---lib
+|   |   |   \---helpers
+|   |   \---types
+|   +---ignore-walk
+|   |   \---lib
+|   +---immutable
+|   +---inherits
+|   +---ini
+|   |   \---lib
+|   +---ip-address
+|   |       +---v4
+|   |       \---v6
+|   +---ipaddr.js
+|   |   \---lib
+|   +---is-extglob
+|   +---is-fullwidth-code-point
+|   +---is-glob
+|   +---is-interactive
+|   +---is-potential-custom-element-name
+|   +---is-promise
+|   +---is-unicode-supported
+|   +---isexe
+|   |   \---test
+|   +---istanbul-lib-coverage
+|   |   \---lib
+|   +---istanbul-lib-instrument
+|   |   \---src
+|   +---jose
+|   |       +---types
+|   |       |   +---jwe
+|   |       |   |   +---compact
+|   |       |   |   +---flattened
+|   |       |   |   \---general
+|   |       |   +---jwk
+|   |       |   +---jwks
+|   |       |   +---jws
+|   |       |   |   +---compact
+|   |       |   |   +---flattened
+|   |       |   |   \---general
+|   |       |   +---jwt
+|   |       |   +---key
+|   |       |   \---util
+|   |       \---webapi
+|   |           +---jwe
+|   |           |   +---compact
+|   |           |   +---flattened
+|   |           |   \---general
+|   |           +---jwk
+|   |           +---jwks
+|   |           +---jws
+|   |           |   +---compact
+|   |           |   +---flattened
+|   |           |   \---general
+|   |           +---jwt
+|   |           +---key
+|   |           +---lib
+|   |           \---util
+|   +---js-tokens
+|   +---jsdom
+|   |   \---lib
+|   |       +---generated
+|   |       |   \---idl
+|   |       \---jsdom
+|   |           +---browser
+|   |           |   +---parser
+|   |           |   \---resources
+|   |           +---level2
+|   |           +---level3
+|   |           \---living
+|   |               +---aborting
+|   |               +---attributes
+|   |               +---constraint-validation
+|   |               +---crypto
+|   |               +---cssom
+|   |               +---custom-elements
+|   |               +---deviceorientation
+|   |               +---domparsing
+|   |               +---encoding
+|   |               +---events
+|   |               +---fetch
+|   |               +---file-api
+|   |               +---geometry
+|   |               +---helpers
+|   |               |   \---svg
+|   |               +---hr-time
+|   |               +---mutation-observer
+|   |               +---navigator
+|   |               +---nodes
+|   |               +---range
+|   |               +---selection
+|   |               +---svg
+|   |               +---traversal
+|   |               +---webidl
+|   |               +---websockets
+|   |               +---webstorage
+|   |               +---window
+|   |               \---xhr
+|   +---jsesc
+|   |   +---bin
+|   |   \---man
+|   +---json-parse-even-better-errors
+|   |   \---lib
+|   +---json-schema-traverse
+|   |   +---.github
+|   |   |   \---workflows
+|   |   \---spec
+|   |       \---fixtures
+|   +---json-schema-typed
+|   +---json5
+|   |   \---lib
+|   +---jsonc-parser
+|   |   \---lib
+|   |       +---esm
+|   |       |   \---impl
+|   |       \---umd
+|   |           \---impl
+|   +---jsonparse
+|   |   +---examples
+|   |   +---samplejson
+|   |   \---test
+|   +---listr2
+|   |       +---string-width
+|   |       \---wrap-ansi
+|   +---lmdb
+|   |   +---bin
+|   |   +---dependencies
+|   |   |   +---lmdb
+|   |   |   |   \---libraries
+|   |   |   |       \---liblmdb
+|   |   |   +---lmdb-data-v1
+|   |   |   |   \---libraries
+|   |   |   |       \---liblmdb
+|   |   |   +---lz4
+|   |   |   |   \---lib
+|   |   |   |       \---dll
+|   |   |   |           \---example
+|   |   |   \---v8
+|   |   +---dict
+|   |   +---src
+|   |   \---util
+|   +---log-symbols
+|   +---log-update
+|   |       +---slice-ansi
+|   |       +---string-width
+|   |       \---wrap-ansi
+|   +---lru-cache
+|   +---magic-string
+|   +---make-fetch-happen
+|   |   \---lib
+|   |       \---cache
+|   +---math-intrinsics
+|   |   +---.github
+|   |   +---constants
+|   |   \---test
+|   +---mdn-data
+|   |   +---api
+|   |   +---css
+|   |   \---l10n
+|   +---media-typer
+|   +---merge-descriptors
+|   +---mime-db
+|   +---mime-types
+|   +---mimic-function
+|   +---minimatch
+|   |       +---commonjs
+|   |       \---esm
+|   +---minipass
+|   |       +---commonjs
+|   |       \---esm
+|   +---minipass-collect
+|   +---minipass-fetch
+|   |   \---lib
+|   +---minipass-flush
+|   |       +---minipass
+|   |       \---yallist
+|   +---minipass-pipeline
+|   |       +---minipass
+|   |       \---yallist
+|   +---minipass-sized
+|   |       +---commonjs
+|   |       \---esm
+|   +---minizlib
+|   |       +---commonjs
+|   |       \---esm
+|   +---mrmime
+|   +---ms
+|   +---msgpackr
+|   +---msgpackr-extract
+|   |   +---bin
+|   |   \---src
+|   +---mute-stream
+|   |   \---lib
+|   +---nanoid
+|   |   +---.claude
+|   |   +---async
+|   |   +---bin
+|   |   +---non-secure
+|   |   \---url-alphabet
+|   +---negotiator
+|   |   \---lib
+|   +---node-addon-api
+|   |   \---tools
+|   +---node-gyp
+|   |   +---bin
+|   |   +---gyp
+|   |   |   +---data
+|   |   |   |   +---ninja
+|   |   |   |   \---win
+|   |   |   +---docs
+|   |   |   \---pylib
+|   |   |       +---gyp
+|   |   |       |   \---generator
+|   |   |       \---packaging
+|   |   +---lib
+|   |   |   +---.bin
+|   |   |   +---isexe
+|   |   |   |       +---commonjs
+|   |   |   |       \---esm
+|   |   |   +---undici
+|   |   |   |   +---docs
+|   |   |   |   |   \---docs
+|   |   |   |   |       +---api
+|   |   |   |   |       \---best-practices
+|   |   |   |   +---lib
+|   |   |   |   |   +---api
+|   |   |   |   |   +---core
+|   |   |   |   |   +---dispatcher
+|   |   |   |   |   +---handler
+|   |   |   |   |   +---interceptor
+|   |   |   |   |   +---llhttp
+|   |   |   |   |   +---mock
+|   |   |   |   |   +---util
+|   |   |   |   |   \---web
+|   |   |   |   |       +---cache
+|   |   |   |   |       +---cookies
+|   |   |   |   |       +---eventsource
+|   |   |   |   |       +---fetch
+|   |   |   |   |       +---fileapi
+|   |   |   |   |       \---websocket
+|   |   |   |   +---scripts
+|   |   |   |   \---types
+|   |   |   \---which
+|   |   |       +---bin
+|   |   |       \---lib
+|   |   \---src
+|   +---node-gyp-build-optional-packages
+|   +---node-releases
+|   |   \---data
+|   |       +---processed
+|   |       \---release-schedule
+|   +---nopt
+|   |   +---bin
+|   |   \---lib
+|   +---npm-bundled
+|   |   \---lib
+|   +---npm-install-checks
+|   |   \---lib
+|   +---npm-normalize-package-bin
+|   |   \---lib
+|   +---npm-package-arg
+|   |   \---lib
+|   +---npm-packlist
+|   |   \---lib
+|   +---npm-pick-manifest
+|   |   \---lib
+|   +---npm-registry-fetch
+|   |   \---lib
+|   +---nth-check
+|   |   \---lib
+|   |       \---esm
+|   +---object-assign
+|   +---object-inspect
+|   |   +---.github
+|   |   +---example
+|   |   \---test
+|   |       \---browser
+|   +---obug
+|   +---on-finished
+|   +---once
+|   +---onetime
+|   +---ora
+|   +---ordered-binary
+|   |   +---.idea
+|   |   +---.nyc_output
+|   |   |   \---processinfo
+|   |   +---assets
+|   |   \---tests
+|   +---p-map
+|   +---pacote
+|   |   +---bin
+|   |   \---lib
+|   |       \---util
+|   +---parse5
+|   |   |   +---common
+|   |   |   +---parser
+|   |   |   +---serializer
+|   |   |   +---tokenizer
+|   |   |   \---tree-adapters
+|   |       \---entities
+|   |           |   +---generated
+|   |           |   \---internal
+|   |           \---src
+|   |               +---generated
+|   |               \---internal
+|   +---parse5-html-rewriting-stream
+|   |       \---entities
+|   |           |   +---commonjs
+|   |           |   |   \---generated
+|   |           |   \---esm
+|   |           |       \---generated
+|   |           \---src
+|   |               \---generated
+|   +---parse5-sax-parser
+|   +---parseurl
+|   +---path-key
+|   +---path-scurry
+|   |   |   +---commonjs
+|   |   |   \---esm
+|   |       \---lru-cache
+|   |               +---commonjs
+|   |               |   +---browser
+|   |               |   \---node
+|   |               \---esm
+|   |                   +---browser
+|   |                   \---node
+|   +---path-to-regexp
+|   +---pathe
+|   |       \---shared
+|   +---picocolors
+|   +---picomatch
+|   |   \---lib
+|   +---piscina
+|   |   +---benchmark
+|   |   |   +---fixtures
+|   |   |   +---queue
+|   |   |   +---simple
+|   |   |   \---startup
+|   |   |   +---task_queue
+|   |   |   \---worker_pool
+|   |   |       \---balancer
+|   |   +---docs
+|   |   |   \---docs
+|   |   |       +---api-reference
+|   |   |       \---update-log
+|   |   +---scripts
+|   |   +---src
+|   |   |   +---task_queue
+|   |   |   \---worker_pool
+|   |   |       \---balancer
+|   |   \---test
+|   |       \---fixtures
+|   +---pkce-challenge
+|   +---postcss
+|   |   \---lib
+|   +---postcss-media-query-parser
+|   |       \---nodes
+|   +---postcss-safe-parser
+|   |   \---lib
+|   +---prettier
+|   |   +---bin
+|   |   +---internal
+|   |   \---plugins
+|   +---proc-log
+|   |   \---lib
+|   +---promise-retry
+|   |   \---test
+|   +---proxy-addr
+|   +---punycode
+|   +---qs
+|   |   +---.github
+|   |   +---lib
+|   |   \---test
+|   +---range-parser
+|   +---raw-body
+|   +---readdirp
+|   +---reflect-metadata
+|   +---require-from-string
+|   +---restore-cursor
+|   +---retry
+|   |   +---example
+|   |   +---lib
+|   |   \---test
+|   |       \---integration
+|   +---rfdc
+|   |   +---.github
+|   |   |   \---workflows
+|   |   \---test
+|   +---rolldown
+|   |   +---bin
+|   |       \---shared
+|   +---rollup
+|   |       +---bin
+|   |       +---es
+|   |       |   \---shared
+|   |       \---shared
+|   +---router
+|   |   \---lib
+|   +---rxjs
+|   |   +---ajax
+|   |   |   +---bundles
+|   |   |   +---cjs
+|   |   |   |   +---ajax
+|   |   |   |   +---fetch
+|   |   |   |   +---internal
+|   |   |   |   |   +---ajax
+|   |   |   |   |   +---observable
+|   |   |   |   |   |   \---dom
+|   |   |   |   |   +---operators
+|   |   |   |   |   +---scheduled
+|   |   |   |   |   +---scheduler
+|   |   |   |   |   +---symbol
+|   |   |   |   |   +---testing
+|   |   |   |   |   \---util
+|   |   |   |   +---operators
+|   |   |   |   +---testing
+|   |   |   |   \---webSocket
+|   |   |   +---esm
+|   |   |   |   +---ajax
+|   |   |   |   +---fetch
+|   |   |   |   +---internal
+|   |   |   |   |   +---ajax
+|   |   |   |   |   +---observable
+|   |   |   |   |   |   \---dom
+|   |   |   |   |   +---operators
+|   |   |   |   |   +---scheduled
+|   |   |   |   |   +---scheduler
+|   |   |   |   |   +---symbol
+|   |   |   |   |   +---testing
+|   |   |   |   |   \---util
+|   |   |   |   +---operators
+|   |   |   |   +---testing
+|   |   |   |   \---webSocket
+|   |   |   +---esm5
+|   |   |   |   +---ajax
+|   |   |   |   +---fetch
+|   |   |   |   +---internal
+|   |   |   |   |   +---ajax
+|   |   |   |   |   +---observable
+|   |   |   |   |   |   \---dom
+|   |   |   |   |   +---operators
+|   |   |   |   |   +---scheduled
+|   |   |   |   |   +---scheduler
+|   |   |   |   |   +---symbol
+|   |   |   |   |   +---testing
+|   |   |   |   |   \---util
+|   |   |   |   +---operators
+|   |   |   |   +---testing
+|   |   |   |   \---webSocket
+|   |   |   \---types
+|   |   |       +---ajax
+|   |   |       +---fetch
+|   |   |       +---internal
+|   |   |       |   +---ajax
+|   |   |       |   +---observable
+|   |   |       |   |   \---dom
+|   |   |       |   +---operators
+|   |   |       |   +---scheduled
+|   |   |       |   +---scheduler
+|   |   |       |   +---symbol
+|   |   |       |   +---testing
+|   |   |       |   \---util
+|   |   |       +---operators
+|   |   |       +---testing
+|   |   |       \---webSocket
+|   |   +---fetch
+|   |   +---operators
+|   |   +---src
+|   |   |   +---ajax
+|   |   |   +---fetch
+|   |   |   +---internal
+|   |   |   |   +---ajax
+|   |   |   |   +---observable
+|   |   |   |   |   \---dom
+|   |   |   |   +---operators
+|   |   |   |   +---scheduled
+|   |   |   |   +---scheduler
+|   |   |   |   +---symbol
+|   |   |   |   +---testing
+|   |   |   |   \---util
+|   |   |   +---operators
+|   |   |   +---testing
+|   |   |   \---webSocket
+|   |   +---testing
+|   |   \---webSocket
+|   +---safer-buffer
+|   +---sass
+|   |   |   +---chokidar
+|   |   |   |   \---esm
+|   |   |   \---readdirp
+|   |   |       \---esm
+|   |   \---types
+|   |       +---legacy
+|   |       +---logger
+|   |       +---util
+|   |       \---value
+|   +---saxes
+|   +---semver
+|   |   +---bin
+|   |   +---classes
+|   |   +---functions
+|   |   +---internal
+|   |   \---ranges
+|   +---send
+|   +---serve-static
+|   +---setprototypeof
+|   |   \---test
+|   +---shebang-command
+|   +---shebang-regex
+|   +---side-channel
+|   |   +---.github
+|   |   \---test
+|   +---side-channel-list
+|   |   +---.github
+|   |   \---test
+|   +---side-channel-map
+|   |   +---.github
+|   |   \---test
+|   +---side-channel-weakmap
+|   |   +---.github
+|   |   \---test
+|   +---siginfo
+|   +---signal-exit
+|   |       +---cjs
+|   |       \---mjs
+|   +---sigstore
+|   +---slice-ansi
+|   +---smart-buffer
+|   |   +---build
+|   |   +---docs
+|   |   \---typings
+|   +---socks
+|   |   +---build
+|   |   |   +---client
+|   |   |   \---common
+|   |   +---docs
+|   |   |   \---examples
+|   |   |       +---javascript
+|   |   |       \---typescript
+|   |   \---typings
+|   |       +---client
+|   |       \---common
+|   +---socks-proxy-agent
+|   +---source-map
+|   |   \---lib
+|   +---source-map-js
+|   |   \---lib
+|   +---source-map-support
+|   |       \---source-map
+|   |           \---lib
+|   +---spdx-exceptions
+|   +---spdx-expression-parse
+|   +---spdx-license-ids
+|   +---ssri
+|   |   \---lib
+|   +---stackback
+|   +---statuses
+|   +---std-env
+|   +---stdin-discarder
+|   +---string-width
+|   +---strip-ansi
+|   +---symbol-tree
+|   |   \---lib
+|   +---tar
+|   |   |   +---commonjs
+|   |   |   \---esm
+|   |       \---yallist
+|   |               +---commonjs
+|   |               \---esm
+|   +---tinybench
+|   +---tinyexec
+|   +---tinyglobby
+|   +---tinyrainbow
+|   +---tldts
+|   |   +---bin
+|   |   |   +---cjs
+|   |   |   |   \---src
+|   |   |   |       \---data
+|   |   |   +---es6
+|   |   |   |   \---src
+|   |   |   |       \---data
+|   |   |   \---types
+|   |   |       \---src
+|   |   |           \---data
+|   |   \---src
+|   |       \---data
+|   +---tldts-core
+|   |   |   +---cjs
+|   |   |   |   \---src
+|   |   |   |       \---lookup
+|   |   |   +---es6
+|   |   |   |   \---src
+|   |   |   |       \---lookup
+|   |   |   \---types
+|   |   |       \---src
+|   |   |           \---lookup
+|   |   \---src
+|   |       \---lookup
+|   +---toidentifier
+|   +---tough-cookie
+|   +---tr46
+|   |   \---lib
+|   +---tslib
+|   |   \---modules
+|   +---tuf-js
+|   |       \---utils
+|   +---type-is
+|   |       \---content-type
+|   +---typescript
+|   |   +---bin
+|   |   \---lib
+|   |       +---cs
+|   |       +---de
+|   |       +---es
+|   |       +---fr
+|   |       +---it
+|   |       +---ja
+|   |       +---ko
+|   |       +---pl
+|   |       +---pt-br
+|   |       +---ru
+|   |       +---tr
+|   |       +---zh-cn
+|   |       \---zh-tw
+|   +---undici
+|   |   +---docs
+|   |   |   \---docs
+|   |   |       +---api
+|   |   |       \---best-practices
+|   |   +---lib
+|   |   |   +---api
+|   |   |   +---cache
+|   |   |   +---core
+|   |   |   +---dispatcher
+|   |   |   +---encoding
+|   |   |   +---handler
+|   |   |   +---interceptor
+|   |   |   +---llhttp
+|   |   |   +---mock
+|   |   |   +---util
+|   |   |   \---web
+|   |   |       +---cache
+|   |   |       +---cookies
+|   |   |       +---eventsource
+|   |   |       +---fetch
+|   |   |       +---infra
+|   |   |       +---subresource-integrity
+|   |   |       +---webidl
+|   |   |       \---websocket
+|   |   |           \---stream
+|   |   +---scripts
+|   |   \---types
+|   +---unpipe
+|   +---update-browserslist-db
+|   +---validate-npm-package-name
+|   |   \---lib
+|   +---vary
+|   +---vite
+|   |   +---bin
+|   |   |   +---client
+|   |   |   \---node
+|   |   |       \---chunks
+|   |   +---misc
+|   |   \---types
+|   |       \---internal
+|   +---vitest
+|   |   +---browser
+|   |       +---chunks
+|   |       \---workers
+|   +---w3c-xmlserializer
+|   |   \---lib
+|   +---watchpack
+|   |   +---lib
+|   |   \---types
+|   +---weak-lru-cache
+|   |   \---tests
+|   +---webidl-conversions
+|   |   \---lib
+|   +---whatwg-mimetype
+|   |   \---lib
+|   +---whatwg-url
+|   |   \---lib
+|   +---which
+|   |   \---bin
+|   +---why-is-node-running
+|   |   \---.github
+|   +---wrap-ansi
+|   |       +---ansi-regex
+|   |       +---ansi-styles
+|   |       +---emoji-regex
+|   |       |   \---es2015
+|   |       +---is-fullwidth-code-point
+|   |       +---string-width
+|   |       \---strip-ansi
+|   +---wrappy
+|   +---xml-name-validator
+|   |   \---lib
+|   +---xmlchars
+|   |   +---xml
+|   |   |   +---1.0
+|   |   |   \---1.1
+|   |   \---xmlns
+|   |       \---1.0
+|   +---y18n
+|   |   \---build
+|   |       \---lib
+|   |           \---platform-shims
+|   +---yallist
+|   +---yargs
+|   |   +---build
+|   |   |   \---lib
+|   |   |       +---typings
+|   |   |       \---utils
+|   |   +---helpers
+|   |   +---lib
+|   |   |   \---platform-shims
+|   |   +---locales
+|   |       \---string-width
+|   +---yargs-parser
+|   |   \---build
+|   |       \---lib
+|   +---yoctocolors
+|   +---yoctocolors-cjs
+|   +---zod
+|   |   +---locales
+|   |   +---mini
+|   |   +---src
+|   |   |   +---locales
+|   |   |   +---mini
+|   |   |   +---v3
+|   |   |   |   +---benchmarks
+|   |   |   |   +---helpers
+|   |   |   |   +---locales
+|   |   |   |   \---tests
+|   |   |   +---v4
+|   |   |   |   +---classic
+|   |   |   |   |   \---tests
+|   |   |   |   +---core
+|   |   |   |   |   \---tests
+|   |   |   |   |       \---locales
+|   |   |   |   +---locales
+|   |   |   |   \---mini
+|   |   |   |       \---tests
+|   |   |   \---v4-mini
+|   |   +---v3
+|   |   |   +---helpers
+|   |   |   \---locales
+|   |   +---v4
+|   |   |   +---classic
+|   |   |   +---core
+|   |   |   +---locales
+|   |   |   \---mini
+|   |   \---v4-mini
+|   \---zod-to-json-schema
+|       +---.github
+|           +---cjs
+|           |   \---parsers
+|           +---esm
+|           |   \---parsers
+|           \---types
+|               \---parsers
++---public
+\---src
+    \---app

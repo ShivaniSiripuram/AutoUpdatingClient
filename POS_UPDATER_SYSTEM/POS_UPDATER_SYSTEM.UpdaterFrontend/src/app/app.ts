@@ -31,6 +31,9 @@ interface DeploymentState {
   isRollbackAvailable: boolean;
   lastError?: string;
   lastOperationLogFile?: string;
+  corruptedVersion?: string;
+  corruptedReason?: string;
+  corruptedVersionAt?: string;
 }
 
 interface LatestUpdateInfo {
@@ -45,6 +48,11 @@ interface UpdateCheckResult {
   isUpdateAvailable: boolean;
   latest?: LatestUpdateInfo;
   logFile?: string;
+  corruptedVersion?: string;
+  corruptedReason?: string;
+  isLatestCorrupted: boolean;
+  remoteLatestVersion?: string;
+  isLatestSuppressed: boolean;
 }
 
 interface DeploymentResult {
@@ -69,7 +77,7 @@ interface DeploymentLogContent {
 type ApiAction = 'check' | 'deploy' | 'rollback';
 
 const apiBaseKey = 'pos-updater-api-base';
-const defaultApiBase = 'http://localhost:5000';
+const defaultApiBase = 'http://localhost:5074';
 const visualDeploymentDurationMs = 30_000;
 
 @Component({
@@ -133,9 +141,15 @@ export class App {
 
   readonly latestVersion = computed(() => {
     this.visualTick();
+    const state = this.state();
+    const latest = this.latest();
+    if (state?.corruptedVersion && latest?.remoteLatestVersion === state.corruptedVersion) {
+      return state.currentVersion ?? 'Unknown';
+    }
+
     return this.isVisualDeploymentActive()
       ? this.visualDeploymentTargetVersion ?? 'Unknown'
-      : this.latest()?.latestVersion ?? 'Unknown';
+      : latest?.latestVersion ?? state?.currentVersion ?? 'Unknown';
   });
   readonly currentVersion = computed(() => {
     this.visualTick();
@@ -248,6 +262,18 @@ export class App {
         if (latest && state.currentVersion === latest.latestVersion) {
           this.latest.set({ ...latest, currentVersion: state.currentVersion, isUpdateAvailable: false });
         }
+        if (latest && state.corruptedVersion && state.corruptedVersion === latest.latestVersion) {
+          this.latest.set({
+            ...latest,
+            currentVersion: state.currentVersion,
+            latestVersion: state.currentVersion,
+            isUpdateAvailable: false,
+            latest: undefined,
+            corruptedVersion: state.corruptedVersion,
+            corruptedReason: state.corruptedReason,
+            isLatestCorrupted: true
+          });
+        }
         this.error.set(null);
       },
       error: (error) => this.captureError('State refresh failed', error)
@@ -355,7 +381,9 @@ export class App {
 
         if (!result.isUpdateAvailable || result.currentVersion === result.latestVersion || !result.latest) {
           this.autoDeployVersion = null;
-          this.autoUpdateStatus.set('No update available. Next check in 5 seconds.');
+          this.autoUpdateStatus.set(result.isLatestCorrupted && result.corruptedVersion
+            ? `Version ${result.corruptedVersion} is marked corrupted. Waiting for a newer update.`
+            : 'No update available. Next check in 5 seconds.');
           return;
         }
 

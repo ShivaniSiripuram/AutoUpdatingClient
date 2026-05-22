@@ -11,4 +11,14 @@ public sealed class UpdateCheckResult
     public LatestUpdateInfo? Latest { get; init; }
 
     public string? LogFile { get; init; }
+
+    public string? CorruptedVersion { get; init; }
+
+    public string? CorruptedReason { get; init; }
+
+    public bool IsLatestCorrupted { get; init; }
+
+    public string? RemoteLatestVersion { get; init; }
+
+    public bool IsLatestSuppressed { get; init; }
 }

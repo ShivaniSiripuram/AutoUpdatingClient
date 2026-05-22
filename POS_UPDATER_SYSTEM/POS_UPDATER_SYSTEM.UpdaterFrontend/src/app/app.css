@@ -176,6 +176,10 @@ button:disabled {
   color: #a63d40;
 }
 
+.warning {
+  color: #9a5b00;
+}
+
 .logs-layout {
   display: grid;
   grid-template-columns: 330px minmax(0, 1fr);

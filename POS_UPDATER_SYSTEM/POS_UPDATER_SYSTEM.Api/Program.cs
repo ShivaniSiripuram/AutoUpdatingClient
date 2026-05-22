@@ -57,7 +57,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("UpdaterFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
+        policy.WithOrigins(
+                "http://localhost:4200",
+                "https://localhost:4200",
+                "http://localhost:5075")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });

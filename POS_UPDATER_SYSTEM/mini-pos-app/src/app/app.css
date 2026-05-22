@@ -1,0 +1,42 @@
+body {
+  /* Remove browser default spacing and set the page-level theme. */
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #0f172a;
+}
+
+.container {
+  /* Center the card in the viewport. */
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  /* Keep the status content readable against the dark page background. */
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0px 4px 20px rgba(0,0,0,0.3);
+}
+
+h1 {
+  /* Separate the screen title from the status fields. */
+  margin-bottom: 30px;
+  color: #2563eb;
+}
+
+.info {
+  /* Align labels and values for easier scanning. */
+  text-align: left;
+  margin-bottom: 30px;
+}
+
+.info p {
+  /* Give each status row a consistent vertical rhythm. */
+  margin: 10px 0;
+}
+

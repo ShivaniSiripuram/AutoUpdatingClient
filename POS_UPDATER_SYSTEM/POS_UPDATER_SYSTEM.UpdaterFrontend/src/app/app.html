@@ -34,11 +34,14 @@
       Automatic check: {{ latest()?.isUpdateAvailable ? 'Update available' : 'No update available' }}
       (latest {{ latest()?.latestVersion }})
     </p>
+    <p class="warning" *ngIf="state()?.corruptedVersion">
+      Corrupted version: {{ state()?.corruptedVersion }} - {{ state()?.corruptedReason }}
+    </p>
     <p *ngIf="!latest()">{{ autoUpdateStatus() }}</p>
     <p *ngIf="lastResult()">Result: {{ lastResult()?.message }}</p>
     <p *ngIf="state()?.lastOperationLogFile">Last log: {{ state()?.lastOperationLogFile }}</p>
     <p class="error" *ngIf="state()?.lastError">Last error: {{ state()?.lastError }}</p>
-    <p class="error" *ngIf="error()">{{ error() }}</p>
+    <!-- <p class="error" *ngIf="error()">{{ error() }}</p> -->
   </section>
 
   <section class="logs-layout">

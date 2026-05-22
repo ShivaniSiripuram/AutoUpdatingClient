@@ -62,14 +62,17 @@ public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
             var stateSnapshot = await _stateStore.GetAsync(cancellationToken);
             var currentVersion = stateSnapshot.CurrentVersion;
             var isBlockedVersion = IsSameVersion(latest.Version, stateSnapshot.BlockedVersion);
-            var isUpdateAvailable = !isBlockedVersion && !IsSameVersion(currentVersion, latest.Version);
+            var isCorruptedVersion = IsSameVersion(latest.Version, stateSnapshot.CorruptedVersion);
+            var isSuppressedVersion = isBlockedVersion || isCorruptedVersion;
+            var isUpdateAvailable = !isSuppressedVersion && !IsSameVersion(currentVersion, latest.Version);
 
             _logger.LogInformation(
-                "Update check completed. Current={CurrentVersion}, Latest={LatestVersion}, UpdateAvailable={IsUpdateAvailable}, Blocked={IsBlockedVersion}.",
+                "Update check completed. Current={CurrentVersion}, Latest={LatestVersion}, UpdateAvailable={IsUpdateAvailable}, Blocked={IsBlockedVersion}, Corrupted={IsCorruptedVersion}.",
                 currentVersion,
                 latest.Version,
                 isUpdateAvailable,
-                isBlockedVersion);
+                isBlockedVersion,
+                isCorruptedVersion);
 
             await _stateStore.UpdateAsync(state =>
             {
@@ -83,10 +86,15 @@ public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
             return new UpdateCheckResult
             {
                 CurrentVersion = currentVersion,
-                LatestVersion = isBlockedVersion ? currentVersion : latest.Version,
+                LatestVersion = isSuppressedVersion ? currentVersion : latest.Version,
                 IsUpdateAvailable = isUpdateAvailable,
-                Latest = isBlockedVersion ? null : latest,
-                LogFile = stateSnapshot.LastOperationLogFile
+                Latest = isSuppressedVersion ? null : latest,
+                LogFile = stateSnapshot.LastOperationLogFile,
+                CorruptedVersion = stateSnapshot.CorruptedVersion,
+                CorruptedReason = stateSnapshot.CorruptedReason,
+                IsLatestCorrupted = isCorruptedVersion,
+                RemoteLatestVersion = latest.Version,
+                IsLatestSuppressed = isSuppressedVersion
             };
         }
         catch (Exception ex)
@@ -138,9 +146,10 @@ public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
         try
         {
             var startingState = await _stateStore.GetAsync(cancellationToken);
-            if (IsSameVersion(latest.Version, startingState.BlockedVersion))
+            if (IsSameVersion(latest.Version, startingState.BlockedVersion)
+                || IsSameVersion(latest.Version, startingState.CorruptedVersion))
             {
-                _logger.LogWarning("Deployment refused because version {Version} is blocked after manual rollback.", latest.Version);
+                _logger.LogWarning("Deployment refused because version {Version} is suppressed. Blocked={BlockedVersion}, Corrupted={CorruptedVersion}.", latest.Version, startingState.BlockedVersion, startingState.CorruptedVersion);
                 return new DeploymentResult
                 {
                     Succeeded = false,
@@ -196,6 +205,9 @@ public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
                 state.LastOperationLogFile = Path.GetFileName(logPath);
                 state.BlockedVersion = null;
                 state.BlockedVersionAt = null;
+                state.CorruptedVersion = null;
+                state.CorruptedReason = null;
+                state.CorruptedVersionAt = null;
                 return state;
             }, cancellationToken);
 
@@ -217,7 +229,12 @@ public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
                 latest.Version,
                 backupPath ?? "none");
 
-            await MarkFailedAsync("Deployment stopped before completion. No automatic rollback was attempted.", ex, Path.GetFileName(logPath), cancellationToken);
+            await MarkDeploymentFailedAsync(
+                latest.Version,
+                "Deployment stopped before completion. No automatic rollback was attempted.",
+                ex,
+                Path.GetFileName(logPath),
+                cancellationToken);
 
             return new DeploymentResult
             {
@@ -339,6 +356,33 @@ public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
         }, cancellationToken);
     }
 
+    private async Task MarkDeploymentFailedAsync(string version, string reason, Exception exception, string? logFile, CancellationToken cancellationToken)
+    {
+        await _stateStore.UpdateAsync(state =>
+        {
+            var failureStatus = state.Status;
+            var failureReason = $"{reason} {exception.Message}";
+
+            state.Status = DeploymentStatus.FAILED;
+            state.IsUpdating = false;
+            state.LastError = failureReason;
+
+            if (IsCandidateValidationFailure(failureStatus))
+            {
+                state.CorruptedVersion = version;
+                state.CorruptedReason = failureReason;
+                state.CorruptedVersionAt = DateTimeOffset.UtcNow;
+            }
+
+            if (!string.IsNullOrWhiteSpace(logFile))
+            {
+                state.LastOperationLogFile = logFile;
+            }
+
+            return state;
+        }, cancellationToken);
+    }
+
     private IDisposable? BeginOperationLogScope(string logPath)
     {
         return _logger.BeginScope(new Dictionary<string, object>
@@ -391,5 +435,13 @@ public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
         return !string.IsNullOrWhiteSpace(left)
             && !string.IsNullOrWhiteSpace(right)
             && string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsCandidateValidationFailure(DeploymentStatus status)
+    {
+        return status is DeploymentStatus.VERIFYING
+            or DeploymentStatus.STAGING
+            or DeploymentStatus.VALIDATING_STATIC
+            or DeploymentStatus.VALIDATING_RUNTIME;
     }
 }
