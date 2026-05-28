@@ -12,6 +12,12 @@ public sealed class UpdateCheckResult
 
     public string? LogFile { get; init; }
 
+    public string? RejectedVersion { get; init; }
+
+    public string? RejectedReason { get; init; }
+
+    public bool IsLatestRejected { get; init; }
+
     public string? CorruptedVersion { get; init; }
 
     public string? CorruptedReason { get; init; }

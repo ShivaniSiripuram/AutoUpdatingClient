@@ -18,6 +18,9 @@ namespace POS_UPDATER_SYSTEM.Api.Models
         public string? LastOperationLogFile { get; set; }
         public string? BlockedVersion { get; set; }
         public DateTimeOffset? BlockedVersionAt { get; set; }
+        public string? RejectedVersion { get; set; }
+        public string? RejectedReason { get; set; }
+        public DateTimeOffset? RejectedVersionAt { get; set; }
         public string? CorruptedVersion { get; set; }
         public string? CorruptedReason { get; set; }
         public DateTimeOffset? CorruptedVersionAt { get; set; }

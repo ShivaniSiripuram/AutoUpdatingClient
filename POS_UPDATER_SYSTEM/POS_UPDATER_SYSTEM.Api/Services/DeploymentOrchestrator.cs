@@ -61,18 +61,54 @@ public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
             var latest = await _updateClient.GetLatestAsync(cancellationToken);
             var stateSnapshot = await _stateStore.GetAsync(cancellationToken);
             var currentVersion = stateSnapshot.CurrentVersion;
-            var isBlockedVersion = IsSameVersion(latest.Version, stateSnapshot.BlockedVersion);
-            var isCorruptedVersion = IsSameVersion(latest.Version, stateSnapshot.CorruptedVersion);
-            var isSuppressedVersion = isBlockedVersion || isCorruptedVersion;
-            var isUpdateAvailable = !isSuppressedVersion && !IsSameVersion(currentVersion, latest.Version);
+            var rejectedVersion = stateSnapshot.RejectedVersion ?? stateSnapshot.CorruptedVersion;
+            var rejectedReason = stateSnapshot.RejectedReason ?? stateSnapshot.CorruptedReason;
+            if (IsNewerVersion(latest.Version, rejectedVersion))
+            {
+                await _stateStore.UpdateAsync(state =>
+                {
+                    state.RejectedVersion = null;
+                    state.RejectedReason = null;
+                    state.RejectedVersionAt = null;
+                    state.CorruptedVersion = null;
+                    state.CorruptedReason = null;
+                    state.CorruptedVersionAt = null;
+                    return state;
+                }, cancellationToken);
 
+                rejectedVersion = null;
+                rejectedReason = null;
+            }
+
+
+            var effectiveRejectedVersion =
+    stateSnapshot.RejectedVersion ?? stateSnapshot.CorruptedVersion;
+
+            var isBlockedVersion =
+                !string.IsNullOrWhiteSpace(stateSnapshot.BlockedVersion) &&
+                IsSameVersion(latest.Version, stateSnapshot.BlockedVersion);
+
+            var isRejectedVersion =
+                !string.IsNullOrWhiteSpace(effectiveRejectedVersion) &&
+                IsSameVersion(latest.Version, effectiveRejectedVersion);
+
+            var isSuppressedVersion = isBlockedVersion || isRejectedVersion;
+
+            var hasCurrent = Version.TryParse(currentVersion, out var current);
+            var hasLatest = Version.TryParse(latest.Version, out var latestV);
+
+            var isUpdateAvailable =
+                hasCurrent &&
+                hasLatest &&
+                !isSuppressedVersion &&
+                latestV!.CompareTo(current!) > 0;
             _logger.LogInformation(
-                "Update check completed. Current={CurrentVersion}, Latest={LatestVersion}, UpdateAvailable={IsUpdateAvailable}, Blocked={IsBlockedVersion}, Corrupted={IsCorruptedVersion}.",
+                "Update check completed. Current={CurrentVersion}, Latest={LatestVersion}, UpdateAvailable={IsUpdateAvailable}, Blocked={IsBlockedVersion}, Rejected={IsRejectedVersion}.",
                 currentVersion,
                 latest.Version,
                 isUpdateAvailable,
                 isBlockedVersion,
-                isCorruptedVersion);
+                isRejectedVersion);
 
             await _stateStore.UpdateAsync(state =>
             {
@@ -90,9 +126,12 @@ public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
                 IsUpdateAvailable = isUpdateAvailable,
                 Latest = isSuppressedVersion ? null : latest,
                 LogFile = stateSnapshot.LastOperationLogFile,
-                CorruptedVersion = stateSnapshot.CorruptedVersion,
-                CorruptedReason = stateSnapshot.CorruptedReason,
-                IsLatestCorrupted = isCorruptedVersion,
+                RejectedVersion = rejectedVersion,
+                RejectedReason = rejectedReason,
+                IsLatestRejected = isRejectedVersion,
+                CorruptedVersion = rejectedVersion,
+                CorruptedReason = rejectedReason,
+                IsLatestCorrupted = isRejectedVersion,
                 RemoteLatestVersion = latest.Version,
                 IsLatestSuppressed = isSuppressedVersion
             };
@@ -146,10 +185,11 @@ public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
         try
         {
             var startingState = await _stateStore.GetAsync(cancellationToken);
+            var rejectedVersion = startingState.RejectedVersion ?? startingState.CorruptedVersion;
             if (IsSameVersion(latest.Version, startingState.BlockedVersion)
-                || IsSameVersion(latest.Version, startingState.CorruptedVersion))
+                || IsSameVersion(latest.Version, rejectedVersion))
             {
-                _logger.LogWarning("Deployment refused because version {Version} is suppressed. Blocked={BlockedVersion}, Corrupted={CorruptedVersion}.", latest.Version, startingState.BlockedVersion, startingState.CorruptedVersion);
+                _logger.LogWarning("Deployment refused because version {Version} is suppressed. Blocked={BlockedVersion}, Rejected={RejectedVersion}.", latest.Version, startingState.BlockedVersion, rejectedVersion);
                 return new DeploymentResult
                 {
                     Succeeded = false,
@@ -205,6 +245,9 @@ public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
                 state.LastOperationLogFile = Path.GetFileName(logPath);
                 state.BlockedVersion = null;
                 state.BlockedVersionAt = null;
+                state.RejectedVersion = null;
+                state.RejectedReason = null;
+                state.RejectedVersionAt = null;
                 state.CorruptedVersion = null;
                 state.CorruptedReason = null;
                 state.CorruptedVersionAt = null;
@@ -225,13 +268,13 @@ public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
         {
             _logger.LogError(
                 ex,
-                "[PIPELINE] Deployment stopped for version {Version}. No automatic rollback was attempted. BackupPath={BackupPath}.",
+                "[PIPELINE] Deployment stopped for version {Version}. BackupPath={BackupPath}.",
                 latest.Version,
                 backupPath ?? "none");
 
             await MarkDeploymentFailedAsync(
                 latest.Version,
-                "Deployment stopped before completion. No automatic rollback was attempted.",
+                "Deployment stopped before completion.",
                 ex,
                 Path.GetFileName(logPath),
                 cancellationToken);
@@ -369,6 +412,9 @@ public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
 
             if (IsCandidateValidationFailure(failureStatus))
             {
+                state.RejectedVersion = version;
+                state.RejectedReason = failureReason;
+                state.RejectedVersionAt = DateTimeOffset.UtcNow;
                 state.CorruptedVersion = version;
                 state.CorruptedReason = failureReason;
                 state.CorruptedVersionAt = DateTimeOffset.UtcNow;
@@ -437,9 +483,22 @@ public sealed class DeploymentOrchestrator : IDeploymentOrchestrator
             && string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
     }
 
+    private static bool IsNewerVersion(string latestVersion, string? rejectedVersion)
+    {
+        if (string.IsNullOrWhiteSpace(rejectedVersion))
+        {
+            return false;
+        }
+
+        return Version.TryParse(latestVersion, out var latest)
+            && Version.TryParse(rejectedVersion, out var rejected)
+            && latest.CompareTo(rejected) > 0;
+    }
+
     private static bool IsCandidateValidationFailure(DeploymentStatus status)
     {
-        return status is DeploymentStatus.VERIFYING
+        return status is DeploymentStatus.DOWNLOADING
+            or DeploymentStatus.VERIFYING
             or DeploymentStatus.STAGING
             or DeploymentStatus.VALIDATING_STATIC
             or DeploymentStatus.VALIDATING_RUNTIME;

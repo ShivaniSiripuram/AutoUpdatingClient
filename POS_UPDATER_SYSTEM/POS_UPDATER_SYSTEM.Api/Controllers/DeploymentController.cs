@@ -57,6 +57,8 @@ public sealed class DeploymentController : ControllerBase
         return _orchestrator.RollbackToPreviousVersionAsync(cancellationToken);
     }
 
+    
+
     [HttpGet("logs")]
     public ActionResult<IEnumerable<DeploymentLogSummary>> GetLogs()
     {

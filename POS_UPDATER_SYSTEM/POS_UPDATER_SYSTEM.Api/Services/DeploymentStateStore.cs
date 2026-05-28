@@ -1,10 +1,10 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Text.Json.Serialization; // For JsonStringEnumConverter object to json, JSON to object
 using POS_UPDATER_SYSTEM.Api.Models;
 
 namespace POS_UPDATER_SYSTEM.Api.Services;
 
-public sealed class DeploymentStateStore : IDeploymentStateStore
+public sealed class DeploymentStateStore : IDeploymentStateStore 
 {
     private readonly StoragePaths _paths;
     private readonly string _filePath;
