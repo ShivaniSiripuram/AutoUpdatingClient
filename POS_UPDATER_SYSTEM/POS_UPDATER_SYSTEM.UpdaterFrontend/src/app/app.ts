@@ -31,6 +31,9 @@ interface DeploymentState {
   isRollbackAvailable: boolean;
   lastError?: string;
   lastOperationLogFile?: string;
+  rejectedVersion?: string;
+  rejectedReason?: string;
+  rejectedVersionAt?: string;
   corruptedVersion?: string;
   corruptedReason?: string;
   corruptedVersionAt?: string;
@@ -48,6 +51,9 @@ interface UpdateCheckResult {
   isUpdateAvailable: boolean;
   latest?: LatestUpdateInfo;
   logFile?: string;
+  rejectedVersion?: string;
+  rejectedReason?: string;
+  isLatestRejected: boolean;
   corruptedVersion?: string;
   corruptedReason?: string;
   isLatestCorrupted: boolean;
@@ -77,7 +83,7 @@ interface DeploymentLogContent {
 type ApiAction = 'check' | 'deploy' | 'rollback';
 
 const apiBaseKey = 'pos-updater-api-base';
-const defaultApiBase = 'http://localhost:5074';
+const defaultApiBase = 'http://localhost:5000';
 const visualDeploymentDurationMs = 30_000;
 
 @Component({
@@ -143,7 +149,8 @@ export class App {
     this.visualTick();
     const state = this.state();
     const latest = this.latest();
-    if (state?.corruptedVersion && latest?.remoteLatestVersion === state.corruptedVersion) {
+    const rejectedVersion = this.rejectedVersion();
+    if (state && rejectedVersion && latest?.remoteLatestVersion === rejectedVersion) {
       return state.currentVersion ?? 'Unknown';
     }
 
@@ -225,6 +232,8 @@ export class App {
   });
   readonly canDeploy = computed(() => this.isUpdateAvailable() && !this.busyAction() && !this.state()?.isUpdating);
   readonly canRollback = computed(() => !!this.state()?.isRollbackAvailable && !this.busyAction() && !this.state()?.isUpdating);
+  readonly rejectedVersion = computed(() => this.state()?.rejectedVersion ?? this.state()?.corruptedVersion ?? null);
+  readonly rejectedReason = computed(() => this.state()?.rejectedReason ?? this.state()?.corruptedReason ?? null);
 
   constructor() {
     this.refresh();
@@ -262,15 +271,20 @@ export class App {
         if (latest && state.currentVersion === latest.latestVersion) {
           this.latest.set({ ...latest, currentVersion: state.currentVersion, isUpdateAvailable: false });
         }
-        if (latest && state.corruptedVersion && state.corruptedVersion === latest.latestVersion) {
+        const rejectedVersion = state.rejectedVersion ?? state.corruptedVersion;
+        const rejectedReason = state.rejectedReason ?? state.corruptedReason;
+        if (latest && rejectedVersion && rejectedVersion === latest.latestVersion) {
           this.latest.set({
             ...latest,
             currentVersion: state.currentVersion,
             latestVersion: state.currentVersion,
             isUpdateAvailable: false,
             latest: undefined,
-            corruptedVersion: state.corruptedVersion,
-            corruptedReason: state.corruptedReason,
+            rejectedVersion,
+            rejectedReason,
+            isLatestRejected: true,
+            corruptedVersion: rejectedVersion,
+            corruptedReason: rejectedReason,
             isLatestCorrupted: true
           });
         }
@@ -291,6 +305,8 @@ export class App {
   rollback(): void {
     this.runAction('rollback', this.http.post<DeploymentResult>(this.url('/api/deployment/rollback'), {}));
   }
+
+  
 
   selectLog(fileName: string): void {
     this.selectedLogFile.set(fileName);
@@ -381,8 +397,9 @@ export class App {
 
         if (!result.isUpdateAvailable || result.currentVersion === result.latestVersion || !result.latest) {
           this.autoDeployVersion = null;
-          this.autoUpdateStatus.set(result.isLatestCorrupted && result.corruptedVersion
-            ? `Version ${result.corruptedVersion} is marked corrupted. Waiting for a newer update.`
+          const rejectedVersion = result.rejectedVersion ?? result.corruptedVersion;
+          this.autoUpdateStatus.set((result.isLatestRejected || result.isLatestCorrupted) && rejectedVersion
+            ? `Version ${rejectedVersion} is rejected. Waiting for a newer update.`
             : 'No update available. Next check in 5 seconds.');
           return;
         }

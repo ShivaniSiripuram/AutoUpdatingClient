@@ -34,9 +34,14 @@
       Automatic check: {{ latest()?.isUpdateAvailable ? 'Update available' : 'No update available' }}
       (latest {{ latest()?.latestVersion }})
     </p>
-    <p class="warning" *ngIf="state()?.corruptedVersion">
-      Corrupted version: {{ state()?.corruptedVersion }} - {{ state()?.corruptedReason }}
-    </p>
+    <div class="rejected-update" *ngIf="rejectedVersion()">
+      
+        <h2>Rejected update</h2>
+        
+      <p>{{ rejectedVersion() }}</p>
+      <span>Reason:</span>
+      <strong>{{ rejectedReason() }}</strong>
+    </div>
     <p *ngIf="!latest()">{{ autoUpdateStatus() }}</p>
     <p *ngIf="lastResult()">Result: {{ lastResult()?.message }}</p>
     <p *ngIf="state()?.lastOperationLogFile">Last log: {{ state()?.lastOperationLogFile }}</p>

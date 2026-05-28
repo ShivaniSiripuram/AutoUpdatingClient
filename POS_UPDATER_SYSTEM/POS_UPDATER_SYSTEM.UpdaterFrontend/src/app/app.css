@@ -180,6 +180,32 @@ button:disabled {
   color: #9a5b00;
 }
 
+.rejected-update {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #e0a243;
+  border-radius: 8px;
+  background: #fff8eb;
+  color: #5f3b00;
+}
+
+.rejected-update p {
+  font-size: 24px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.rejected-update span {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.rejected-update strong {
+  overflow-wrap: anywhere;
+}
+
 .logs-layout {
   display: grid;
   grid-template-columns: 330px minmax(0, 1fr);
